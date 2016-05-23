@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 
 
 
-import com.terminalfour.xmlservicejdbc.core.XmlObject;
+
+import com.terminalfour.xmlservicejdbc.core.xml.XmlObject;
 
 public class Test2 {
 

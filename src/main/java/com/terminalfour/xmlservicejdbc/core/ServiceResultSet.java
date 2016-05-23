@@ -2,41 +2,43 @@ package com.terminalfour.xmlservicejdbc.core;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceResultSet extends Unused implements ResultSet {
 
-    private final ServiceStatment statement;
-
-    boolean open = false;
-    String[] cols = null;
-    String[] colsMeta = null;
-    boolean[][] meta = null;
-
     private int row = 1;
 
-    ServiceResultSet(ServiceStatment statement) {
-        this.statement = statement;
+    List<Map<String, Object>> data;
+
+    ServiceResultSet() {
+        this.data = new ArrayList<>();
     }
 
+    public void setData(List<Map<String, Object>> data) {
+        this.data = data;
+    }
+
+    @Override
     public boolean next() throws SQLException {
         row++;
+
+        if (row - 1 >= data.size()) {
+            return false;
+        }
+
         return true;
     }
 
-    boolean isOpen() {
-        return open;
-    }
+    @Override
+    public String getString(String columnLabel) throws SQLException {
 
-    public void close() throws SQLException {
-        cols = null;
-        open = false;
-        limitRows = 0;
-        row = 1;
-        lastCol = -1;
+        Map<String, Object> dataRow = new HashMap<>();
+        dataRow = data.get(row - 1);
 
-        if (statement == null)
-            return;
+        return (String) dataRow.get(columnLabel);
 
     }
 

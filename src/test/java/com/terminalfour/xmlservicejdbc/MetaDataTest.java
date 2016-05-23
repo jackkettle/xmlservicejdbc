@@ -1,5 +1,7 @@
 package com.terminalfour.xmlservicejdbc;
 
+import static org.junit.Assert.*;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -13,6 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.terminalfour.xmlservicejdbc.core.Constants;
 import com.terminalfour.xmlservicejdbc.core.JDBC;
 
@@ -44,18 +47,15 @@ public class MetaDataTest {
 
     @Test
     public void getTables() throws Exception {
-        logger.info("Test case: getTables()");
         ResultSet rs = meta.getTables(null, null, null, null);
-        logger.info("Resultset: {}", rs.toString());
-
         int indexCheck = 0;
         while (rs.next()) {
             indexCheck++;
-            logger.info("Element name: {}", rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME));
-            if (indexCheck > 100)
-                break;
+            if (Strings.isNullOrEmpty(rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME))) {
+                throw new Exception();
+            }
         }
-
+        assertTrue(indexCheck == 6);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(MetaDataTest.class);

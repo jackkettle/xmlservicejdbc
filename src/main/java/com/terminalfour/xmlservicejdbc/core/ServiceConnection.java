@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.terminalfour.xmlservicejdbc.core.xml.SavedResponseProvider;
 
 public class ServiceConnection implements Connection {
 
@@ -117,8 +118,8 @@ public class ServiceConnection implements Connection {
         return false;
     }
 
-    public MetaData getMetaData() throws SQLException {
-        return new MetaData();
+    public ServiceDatabaseMetaData getMetaData() throws SQLException {
+        return new ServiceDatabaseMetaData();
     }
 
     public void setReadOnly(boolean readOnly) throws SQLException {
