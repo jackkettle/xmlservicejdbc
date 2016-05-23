@@ -35,8 +35,6 @@ public class MetaDataTest {
         String fileURI = getClass().getResource("/testResponse.xml").toString();
         conn = DriverManager.getConnection("jdbc:xmlservice:" + fileURI);
         meta = conn.getMetaData();
-
-        logger.info("Class: {}", meta.getClass());
     }
 
     @After

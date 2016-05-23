@@ -15,4 +15,13 @@ public class Constants {
     public static final String ELEMENT_NAME_COLUMN_NAME = "ELEMENT_NAME";
     
     
+    /************************
+     ***** SQL Keywords *****
+     ************************/
+    
+    public static final String SQL_KEYWORD_FROM = "FROM";
+
+    public static final String SQL_KEYWORD_SELECT = "SELECT";
+    
+    
 }
