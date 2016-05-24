@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc;
+package com.xmlservicejdbc.test;
 
 import static org.junit.Assert.*;
 
@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.terminalfour.xmlservicejdbc.core.Constants;
-import com.terminalfour.xmlservicejdbc.core.JDBC;
+import com.xmlservicejdbc.core.Constants;
+import com.xmlservicejdbc.core.JDBC;
 
 public class MetaDataTest {
 
@@ -54,7 +54,7 @@ public class MetaDataTest {
                 throw new Exception();
             }
         }
-        assertTrue(indexCheck == 6);
+        assertTrue(indexCheck == 7);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(MetaDataTest.class);

@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core;
+package com.xmlservicejdbc.core;
 
 import java.io.InputStream;
 import java.io.Reader;

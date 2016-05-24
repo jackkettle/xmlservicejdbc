@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core;
+package com.xmlservicejdbc.core;
 
 public class Constants {
     

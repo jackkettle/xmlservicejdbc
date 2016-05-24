@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc;
+package com.xmlservicejdbc.test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.terminalfour.xmlservicejdbc.core.JDBC;
+import com.xmlservicejdbc.core.JDBC;
 
 public class ConnectionTest {
 

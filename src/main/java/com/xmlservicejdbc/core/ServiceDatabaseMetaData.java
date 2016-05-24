@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core;
+package com.xmlservicejdbc.core;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.terminalfour.xmlservicejdbc.core.xml.SavedResponseProvider;
-import com.terminalfour.xmlservicejdbc.core.xml.XmlQueryHelper;
+import com.xmlservicejdbc.core.xml.SavedResponseProvider;
+import com.xmlservicejdbc.core.xml.XmlQueryHelper;
 
 public class ServiceDatabaseMetaData extends Unused implements DatabaseMetaData {
 

@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core.xml;
+package com.xmlservicejdbc.core.xml;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.terminalfour.xmlservicejdbc.core.Constants;
+import com.xmlservicejdbc.core.Constants;
 
 public class XmlQueryUtils {
 

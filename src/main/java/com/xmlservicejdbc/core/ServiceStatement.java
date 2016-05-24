@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core;
+package com.xmlservicejdbc.core;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import com.terminalfour.xmlservicejdbc.core.xml.XmlQueryHelper;
+import com.xmlservicejdbc.core.xml.XmlQueryHelper;
 
 public class ServiceStatement extends Unused implements Statement {
 

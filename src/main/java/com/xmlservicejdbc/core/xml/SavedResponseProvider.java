@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core.xml;
+package com.xmlservicejdbc.core.xml;
 
 import org.dom4j.DocumentException;
 

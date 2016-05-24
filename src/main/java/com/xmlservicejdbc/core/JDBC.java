@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc.core;
+package com.xmlservicejdbc.core;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -53,7 +53,4 @@ public class JDBC implements Driver {
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return null;
     }
-
-    // private static final org.slf4j.Logger logger = LoggerFactory.getLogger(JDBC.class);
-
 }

@@ -1,4 +1,4 @@
-package com.terminalfour.xmlservicejdbc;
+package com.xmlservicejdbc.test;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
-import com.terminalfour.xmlservicejdbc.core.JDBC;
+import com.xmlservicejdbc.core.JDBC;
 
 public class QueryTest {
 
