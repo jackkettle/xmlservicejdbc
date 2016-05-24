@@ -49,6 +49,7 @@ public class MetaDataTest {
         int indexCheck = 0;
         while (rs.next()) {
             indexCheck++;
+            logger.info(rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME));
             if (Strings.isNullOrEmpty(rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME))) {
                 throw new Exception();
             }

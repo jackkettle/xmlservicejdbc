@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.dom4j.Element;
+
 import com.google.common.base.Optional;
 import com.terminalfour.xmlservicejdbc.core.Constants;
 
@@ -23,12 +25,12 @@ public class XmlQueryHelper {
         }
 
         return data;
-
     }
 
     public static List<Map<String, Object>> handleSelectQuery(String sqlQuery) throws SQLException {
 
-        List<Map<String, Object>> data = new ArrayList<>();
+        if (!SavedResponseProvider.isSet())
+            throw new SQLException("The connection is not set");
 
         Optional<String> tableNameWrapper = getTableNameFromQuery(sqlQuery);
         if (!tableNameWrapper.isPresent())
@@ -38,8 +40,23 @@ public class XmlQueryHelper {
         if (!columnNamesWrapper.isPresent())
             throw new SQLException("Unable to get column names from sqlQuery: " + sqlQuery);
 
-        return data;
+        boolean getAllColumnNames = false;
+        List<String> columnNames = columnNamesWrapper.get();
+        if (columnNames.size() == 1) {
+            if (columnNames.get(0).equals("*"))
+                getAllColumnNames = true;
+        }
 
+        List<Element> elements = new ArrayList<>();
+        elements = SavedResponseProvider.getXmlObject().getAllElementsByName(tableNameWrapper.get());
+
+        List<Map<String, Object>> data = new ArrayList<>();
+        if (getAllColumnNames)
+            data = XmlQueryUtils.getAllColumnValues(elements);
+        else
+            data = XmlQueryUtils.getColumnValues(elements, columnNamesWrapper.get());
+
+        return data;
     }
 
     private static Optional<List<String>> getColumnNamesFromQuery(String sqlQuery) {
@@ -53,18 +70,17 @@ public class XmlQueryHelper {
         String stringToExplode = sqlQuery.substring(Constants.SQL_KEYWORD_SELECT.length(), sqlQuery.indexOf(Constants.SQL_KEYWORD_FROM));
         stringToExplode = stringToExplode.trim();
 
-        List<String> data = new ArrayList<>(); 
-        
+        List<String> data = new ArrayList<>();
+
         String[] tokens = stringToExplode.split(",");
-        for(String token: tokens){
+        for (String token : tokens) {
             data.add(token.trim());
         }
 
-        if(data.size() > 0)
+        if (data.size() > 0)
             return Optional.of(data);
-        
-        return Optional.absent();
 
+        return Optional.absent();
     }
 
     public static Optional<String> getTableNameFromQuery(String sqlQuery) {
@@ -81,7 +97,6 @@ public class XmlQueryHelper {
         }
 
         return Optional.absent();
-
     }
 
 }

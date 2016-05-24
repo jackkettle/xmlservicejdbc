@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.terminalfour.xmlservicejdbc.core.xml.SavedResponseProvider;
 import com.terminalfour.xmlservicejdbc.core.xml.XmlQueryHelper;
 
@@ -30,7 +27,5 @@ public class ServiceDatabaseMetaData extends Unused implements DatabaseMetaData 
         resultSet.setData(data);
         return resultSet;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ServiceDatabaseMetaData.class);
 
 }

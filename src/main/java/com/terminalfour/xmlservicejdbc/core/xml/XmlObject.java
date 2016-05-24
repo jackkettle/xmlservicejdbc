@@ -62,6 +62,12 @@ public class XmlObject {
         return allElements;
     }
     
+    public List<Element> getAllElementsByName(String name) {
+        List<Element> allElements = new ArrayList<Element>();
+        allElements = getElementsByName(name, document.getRootElement(), allElements);
+        return allElements;
+    }
+    
     public List<String> getUniqueElementNames() {
         Set<String> uniqueNames = new HashSet<>();
         List<Element> allElements = new ArrayList<Element>();

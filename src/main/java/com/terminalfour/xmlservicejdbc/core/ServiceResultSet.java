@@ -1,6 +1,7 @@
 package com.terminalfour.xmlservicejdbc.core;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class ServiceResultSet extends Unused implements ResultSet {
 
-    private int row = 1;
+    private int row = 0;
 
     List<Map<String, Object>> data;
 
@@ -23,12 +24,12 @@ public class ServiceResultSet extends Unused implements ResultSet {
 
     @Override
     public boolean next() throws SQLException {
-        row++;
 
-        if (row - 1 >= data.size()) {
+        if (row >= data.size()) {
             return false;
         }
 
+        row++;
         return true;
     }
 
@@ -40,6 +41,11 @@ public class ServiceResultSet extends Unused implements ResultSet {
 
         return (String) dataRow.get(columnLabel);
 
+    }
+
+    @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return new ServiceResultSetMetaData();
     }
 
 }
