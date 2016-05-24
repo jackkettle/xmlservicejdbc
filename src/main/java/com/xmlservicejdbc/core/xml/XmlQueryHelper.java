@@ -20,7 +20,7 @@ public class XmlQueryHelper {
 
         for (String name : xmlObject.getUniqueElementNames()) {
             Map<String, Object> map = new HashMap<>();
-            map.put(Constants.ELEMENT_NAME_COLUMN_NAME, name);
+            map.put(Constants.TABLE_NAME, name);
             data.add(map);
         }
 
@@ -57,6 +57,17 @@ public class XmlQueryHelper {
             data = XmlQueryUtils.getColumnValues(elements, columnNamesWrapper.get());
 
         return data;
+    }
+
+    public static List<Map<String, Object>> getColumnNames(String table) throws SQLException {
+
+        if (!SavedResponseProvider.isSet())
+            throw new SQLException("The connection is not set");
+
+        List<Element> elements = new ArrayList<>();
+        elements = SavedResponseProvider.getXmlObject().getAllElementsByName(table);
+
+        return XmlQueryUtils.getColumnNames(elements);
     }
 
     private static Optional<List<String>> getColumnNamesFromQuery(String sqlQuery) {

@@ -45,7 +45,7 @@ public class ServiceResultSet extends Unused implements ResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new ServiceResultSetMetaData();
+        return new ServiceResultSetMetaData(data);
     }
 
 }

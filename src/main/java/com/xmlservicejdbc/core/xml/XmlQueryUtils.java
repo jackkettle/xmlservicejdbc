@@ -3,13 +3,14 @@ package com.xmlservicejdbc.core.xml;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.xmlservicejdbc.core.Constants;
@@ -43,33 +44,51 @@ public class XmlQueryUtils {
             }
             allRowData.add(allValues);
         }
-        logger.info("Total rows returned: {}", allRowData.size());
         return allRowData;
 
     }
 
-    private static Map<String, Object> getAllAttributeValues(Element element) {
+    private static List<Element> getAllChilden(Element element) {
 
-        Map<String, Object> attributeValues = new HashMap<>();
+        List<Element> children = new ArrayList<>();
+        for (Iterator<?> i = element.elementIterator(); i.hasNext();) {
+            Element childElement = (Element) i.next();
+            children.add(childElement);
+        }
+        return children;
+    }
+    
+    private static List<Attribute> getAllAttributes(Element element) {
+
+        List<Attribute> attributes = new ArrayList<>();
         for (Iterator<?> i = element.attributeIterator(); i.hasNext();) {
             Attribute attribute = (Attribute) i.next();
-            String attributeName = attribute.getName();
-            String attributeValue = attribute.getValue();
-            attributeValues.put(attributeName, attributeValue);
+            attributes.add(attribute);
         }
-        return attributeValues;
+        return attributes;
     }
 
+    
     private static Map<String, Object> getAllChildValues(Element element) {
 
         Map<String, Object> childValues = new HashMap<>();
-        for (Iterator<?> i = element.elementIterator(); i.hasNext();) {
-            Element childElement = (Element) i.next();
+        for (Element childElement: getAllChilden(element)) {
             String childName = childElement.getName();
             String childValue = childElement.getText();
             childValues.put(childName, childValue);
         }
         return childValues;
+    }
+    
+    private static Map<String, Object> getAllAttributeValues(Element element) {
+
+        Map<String, Object> attributeValues = new HashMap<>();
+        for ( Attribute attribute: getAllAttributes(element)) {
+            String attributeName = attribute.getName();
+            String attributeValue = attribute.getValue();
+            attributeValues.put(attributeName, attributeValue);
+        }
+        return attributeValues;
     }
 
     private static Map<String, String> getAllValues(Element element, List<String> columnNames) throws SQLException {
@@ -105,16 +124,40 @@ public class XmlQueryUtils {
                     value = childElement.getText();
                 }
             }
-
+            
             if (Strings.isNullOrEmpty(key)) {
                 throw new SQLException("Unable to find either attribute or element with key: {}", columnName);
             }
+            
+            if(key.contains(" "))
+                key = key.replace(" ", "_");
 
-            values.put(key, value);
+            values.put("t4_xml_" + key, value);
         }
         return values;
     }
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(XmlQueryUtils.class);
+    public static List<Map<String, Object>> getColumnNames(List<Element> elements) {
+        
+        List<Map<String, Object>> allRowData = new ArrayList<>();
+        
+        Set<String> columnNames = new HashSet<>();
+        for(Element element: elements){
+            for(Attribute attribute: getAllAttributes(element)){
+                columnNames.add(attribute.getName());
+            }
+            for(Element childElement: getAllChilden(element)){
+                columnNames.add(childElement.getName());
+            }
+        }
+        
+        for(String name: columnNames){
+            Map<String, Object> map = new HashMap<>();
+            map.put(Constants.COLUMN_NAME, name);
+            allRowData.add(map);
+        }
+        return allRowData;
+    }
+
 
 }

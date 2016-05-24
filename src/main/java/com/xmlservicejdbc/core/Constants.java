@@ -23,7 +23,9 @@ public class Constants {
     
     public static final String CHILD_PREFIX = "c_";
     
-    public static final String ELEMENT_NAME_COLUMN_NAME = "ELEMENT_NAME";
+    public static final String TABLE_NAME = "TABLE_NAME";
+    
+    public static final String COLUMN_NAME = "COLUMN_NAME";
     
     
     /************************

@@ -28,4 +28,18 @@ public class ServiceDatabaseMetaData extends Unused implements DatabaseMetaData 
         return resultSet;
     }
 
+    @Override
+    public ResultSet getColumns(String arg0, String arg1, String arg2, String arg3) throws SQLException {
+
+        ServiceResultSet resultSet = new ServiceResultSet();
+        resultSet.setData(XmlQueryHelper.getColumnNames(arg2));
+        return resultSet;
+        
+    }
+    
+    @Override
+    public boolean isReadOnly() throws SQLException {
+        return true;
+    }
+
 }

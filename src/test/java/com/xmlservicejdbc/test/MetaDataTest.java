@@ -12,8 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.xmlservicejdbc.core.Constants;
@@ -49,14 +47,11 @@ public class MetaDataTest {
         int indexCheck = 0;
         while (rs.next()) {
             indexCheck++;
-            logger.info(rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME));
-            if (Strings.isNullOrEmpty(rs.getString(Constants.ELEMENT_NAME_COLUMN_NAME))) {
+            if (Strings.isNullOrEmpty(rs.getString(Constants.TABLE_NAME))) {
                 throw new Exception();
             }
         }
         assertTrue(indexCheck == 7);
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(MetaDataTest.class);
 
 }

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.dom4j.DocumentException;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -32,16 +31,13 @@ public class ServiceConnection extends Unused implements Connection {
             responseDataWrapper = Utils.getStringFromFile(urlString);
 
         if (!responseDataWrapper.isPresent())
-            throw new SQLException("No data recieved from url: {}", urlString);
+            throw new SQLException("No data recieved from url: " + urlString);
 
         try {
             SavedResponseProvider.setResponseString(responseDataWrapper.get());
         } catch (DocumentException e) {
-            throw new SQLException("Unable to convert response from url to xmlObject: {}", urlString);
+            throw new SQLException("Unable to convert response from url to xmlObject: " + urlString + "\n" + e.getMessage());
         }
-
-        logger.info("Connection successfully established to {}", urlString);
-
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
@@ -52,6 +48,9 @@ public class ServiceConnection extends Unused implements Connection {
         return new ServiceStatement();
     }
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ServiceConnection.class);
+    @Override
+    public boolean isReadOnly() throws SQLException {
+        return true;
+    }
 
 }

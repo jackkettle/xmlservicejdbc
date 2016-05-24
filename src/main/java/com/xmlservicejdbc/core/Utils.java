@@ -11,7 +11,6 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -32,7 +31,6 @@ public class Utils {
             }
             return Optional.of(stringBuilder.toString());
         } catch (URISyntaxException | IOException e) {
-            logger.error("Failed to get data from file uri: {}", urlString, e);
             return Optional.absent();
         }
 
@@ -48,7 +46,6 @@ public class Utils {
             encoding = encoding == null ? "UTF-8" : encoding;
             body = IOUtils.toString(in, encoding);
         } catch (IOException e) {
-            logger.error("Failed to get string from url: {}", urlString, e);
             return Optional.absent();
         }
         return Optional.of(body);
@@ -63,7 +60,6 @@ public class Utils {
             encoding = encoding == null ? "UTF-8" : encoding;
             body = IOUtils.toString(in, encoding);
         } catch (IOException e) {
-            logger.error("Failed to get string from url: {}", url.toString(), e);
             return Optional.absent();
         }
         return Optional.of(body);
@@ -92,7 +88,4 @@ public class Utils {
     private static final String HTTPS_PROTOCAL_SNIPPET = "https://";
 
     private static final String FILE_PROTOCAL_SNIPPET = "file:/";
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Utils.class);
-
 }

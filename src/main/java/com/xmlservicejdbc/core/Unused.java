@@ -53,7 +53,6 @@ abstract class Unused {
     public void close()throws SQLException{unused();}
     public boolean isClosed()throws SQLException{unused();return false;}
     public void setReadOnly(boolean readOnly)throws SQLException{unused();}
-    public boolean isReadOnly()throws SQLException{unused();return false;}
     public void setCatalog(String catalog)throws SQLException{unused();}
     public String getCatalog()throws SQLException{unused();return null;}
     public void setTransactionIsolation(int level)throws SQLException{unused();}
@@ -343,8 +342,6 @@ abstract class Unused {
     public ResultSet getCatalogs()throws SQLException{unused();return null;}
     public ResultSet getClientInfoProperties()throws SQLException{unused();return null;}
     public ResultSet getColumnPrivileges(String catalog,String schema,String table,String columnNamePattern)throws SQLException{unused();return null;}
-    public ResultSet getColumns(String catalog,String schemaPattern,String tableNamePattern,String columnNamePattern)
-    throws SQLException{unused();return null;}
     public ResultSet getCrossReference(String parentCatalog,String parentSchema,String parentTable,String foreignCatalog,String foreignSchema,String foreignTable)throws SQLException{unused();return null;}
     public int getDatabaseMajorVersion()throws SQLException{unused();return 0;}
     public int getDatabaseMinorVersion()throws SQLException{unused();return 0;}
@@ -509,7 +506,6 @@ abstract class Unused {
 
     public String getCatalogName(int column)throws SQLException{unused();return null;}
     public String getColumnClassName(int column)throws SQLException{unused();return null;}
-    public int getColumnCount()throws SQLException{unused();return 0;}
     public int getColumnDisplaySize(int column)throws SQLException{unused();return 0;}
     public String getColumnLabel(int column)throws SQLException{unused();return null;}
     public String getColumnName(int column)throws SQLException{unused();return null;}
