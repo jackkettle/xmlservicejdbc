@@ -64,8 +64,7 @@ __Example URL for File:__
 ``` 
 
 ### TODO 
- - create index
- - insert & getLastError
- - embedded objects  (foo.bar)
- - prepared statements
- - (s|g)etObject( 0 )
+- Handle parent child relationship
+- Expand Select capabilities
+	- Select multiple values from multipe tables
+	- Model parent child relationship
