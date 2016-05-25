@@ -167,7 +167,6 @@ abstract class Unused {
     public short getShort(int columnIndex)throws SQLException{unused();return 0;}
     public short getShort(String columnLabel)throws SQLException{unused();return 0;}
     public Statement getStatement()throws SQLException{unused();return null;}
-    public String getString(int columnIndex)throws SQLException{unused();return null;}
     public Time getTime(int columnIndex)throws SQLException{unused();return null;}
     public Time getTime(String columnLabel)throws SQLException{unused();return null;}
     public Time getTime(int columnIndex,Calendar cal)throws SQLException{unused();return null;}

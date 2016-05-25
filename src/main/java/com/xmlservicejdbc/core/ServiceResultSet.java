@@ -48,4 +48,25 @@ public class ServiceResultSet extends Unused implements ResultSet {
         return new ServiceResultSetMetaData(data);
     }
 
+    @Override
+    public String getString(int arg0) throws SQLException {
+
+        Map<String, Object> dataRow = new HashMap<>();
+        dataRow = data.get(row - 1);
+
+        if (arg0 < 0 || arg0 > dataRow.size()) {
+            throw new SQLException("Invalid argument " + arg0);
+        }
+
+        int index = 0;
+        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
+
+            if (index == arg0)
+                return (String) entry.getValue();
+
+            index++;
+        }
+        throw new SQLException("Unable to get value from column with index " + arg0);
+    }
+
 }
