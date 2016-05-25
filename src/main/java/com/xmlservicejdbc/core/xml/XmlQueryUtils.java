@@ -126,13 +126,13 @@ public class XmlQueryUtils {
             }
             
             if (Strings.isNullOrEmpty(key)) {
-                throw new SQLException("Unable to find either attribute or element with key: {}", columnName);
+                throw new SQLException("Unable to find either attribute or element with key: " + columnName);
             }
             
             if(key.contains(" "))
                 key = key.replace(" ", "_");
 
-            values.put("t4_xml_" + key, value);
+            values.put(key, value);
         }
         return values;
     }

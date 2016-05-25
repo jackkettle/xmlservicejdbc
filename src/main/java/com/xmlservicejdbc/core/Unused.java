@@ -105,7 +105,6 @@ abstract class Unused {
     public void beforeFirst()throws SQLException{unused();}
     public void cancelRowUpdates()throws SQLException{unused();}
     public void deleteRow()throws SQLException{unused();}
-    public int findColumn(String columnLabel)throws SQLException{unused();return 0;}
     public boolean first()throws SQLException{unused();return false;}
     public Array getArray(int columnIndex)throws SQLException{unused();return null;}
     public Array getArray(String columnLabel)throws SQLException{unused();return null;}
@@ -151,8 +150,6 @@ abstract class Unused {
     public NClob getNClob(String columnLabel)throws SQLException{unused();return null;}
     public String getNString(int columnIndex)throws SQLException{unused();return null;}
     public String getNString(String columnLabel)throws SQLException{unused();return null;}
-    public Object getObject(int columnIndex)throws SQLException{unused();return null;}
-    public Object getObject(String columnLabel)throws SQLException{unused();return null;}
     public Object getObject(int columnIndex,Map<String,Class<?>>map)throws SQLException{unused();return null;}
     public Object getObject(String columnLabel,Map<String,Class<?>>map)throws SQLException{unused();return null;}
     public<T>T getObject(int columnIndex,Class<T>type)throws SQLException{unused();return null;}
@@ -507,7 +504,6 @@ abstract class Unused {
     public String getColumnClassName(int column)throws SQLException{unused();return null;}
     public int getColumnDisplaySize(int column)throws SQLException{unused();return 0;}
     public String getColumnLabel(int column)throws SQLException{unused();return null;}
-    public String getColumnName(int column)throws SQLException{unused();return null;}
     public int getColumnType(int column)throws SQLException{unused();return 0;}
     public String getColumnTypeName(int column)throws SQLException{unused();return null;}
     public int getPrecision(int column)throws SQLException{unused();return 0;}

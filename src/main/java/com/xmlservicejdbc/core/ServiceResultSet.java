@@ -34,6 +34,11 @@ public class ServiceResultSet extends Unused implements ResultSet {
     }
 
     @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return new ServiceResultSetMetaData(data);
+    }
+
+    @Override
     public String getString(String columnLabel) throws SQLException {
 
         Map<String, Object> dataRow = new HashMap<>();
@@ -41,11 +46,6 @@ public class ServiceResultSet extends Unused implements ResultSet {
 
         return (String) dataRow.get(columnLabel);
 
-    }
-
-    @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
-        return new ServiceResultSetMetaData(data);
     }
 
     @Override
@@ -67,6 +67,50 @@ public class ServiceResultSet extends Unused implements ResultSet {
             index++;
         }
         throw new SQLException("Unable to get value from column with index " + arg0);
+    }
+
+    @Override
+    public int findColumn(String columnLabel) throws SQLException {
+        Map<String, Object> dataRow = new HashMap<>();
+        dataRow = data.get(row - 1);
+
+        int index = 0;
+        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
+            if (columnLabel.equals(entry.getKey()))
+                return index;
+
+            index++;
+        }
+        throw new SQLException("Unable to find column with label " + columnLabel);
+    }
+
+    @Override
+    public Object getObject(int columnIndex) throws SQLException {
+        Map<String, Object> dataRow = new HashMap<>();
+        dataRow = data.get(row - 1);
+
+        if (columnIndex < 0 || columnIndex > dataRow.size()) {
+            throw new SQLException("Invalid argument " + columnIndex);
+        }
+
+        int index = 1;
+        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
+
+            if (index == columnIndex)
+                return entry.getValue();
+
+            index++;
+
+        }
+        throw new SQLException("Unable to get value from column with index " + columnIndex);
+    }
+
+    @Override
+    public Object getObject(String columnLabel) throws SQLException {
+        Map<String, Object> dataRow = new HashMap<>();
+        dataRow = data.get(row - 1);
+
+        return dataRow.get(columnLabel);
     }
 
 }

@@ -2,11 +2,15 @@ package com.xmlservicejdbc.test;
 
 import static org.junit.Assert.assertTrue;
 
+import com.sun.rowset.CachedRowSetImpl;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.sql.rowset.CachedRowSet;
 
 import org.junit.After;
 import org.junit.Before;
@@ -95,6 +99,17 @@ public class QueryTest {
             return;
         }
         throw new Exception();
+    }
+
+    @Test
+    public void CachedRowSetImplBugTest() throws Exception {
+        String sql = "SELECT courseCode FROM courseInstance";
+        ResultSet resultSet = stmt.executeQuery(sql);
+
+        CachedRowSet cachedRowSet = new CachedRowSetImpl();
+        cachedRowSet.populate(resultSet);
+        cachedRowSet.findColumn("courseCode");
+        cachedRowSet.close();
     }
 
 }

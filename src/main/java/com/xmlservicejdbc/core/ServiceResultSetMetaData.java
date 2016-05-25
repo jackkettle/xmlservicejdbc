@@ -21,4 +21,20 @@ public class ServiceResultSetMetaData extends Unused implements ResultSetMetaDat
         return 0;
     }
 
+    @Override
+    public String getColumnName(int arg0) throws SQLException {
+        
+        if (data.size() <= 0)
+            new SQLException("Connection not set");
+        int index = 1;
+        for (String keyName : data.get(0).keySet()) {
+            if (index == arg0) {
+                return keyName;
+            }
+            index++;
+        }
+        new SQLException("Failed to get Column Name");
+        return null;
+    }
+
 }
