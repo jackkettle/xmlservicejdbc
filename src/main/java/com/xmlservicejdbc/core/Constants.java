@@ -36,5 +36,9 @@ public class Constants {
 
     public static final String SQL_KEYWORD_SELECT = "SELECT";
     
+    public static final String SQL_KEYWORD_WHERE = "WHERE";
+    
+    public static final String SQL_KEYWORD_AS = "AS";
+    
     
 }

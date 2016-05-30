@@ -32,6 +32,7 @@ public class ConnectionTest {
     public void openConnectionValidFile() throws SQLException, ClassNotFoundException {
         
         String fileURI = getClass().getResource("/testResponse.xml").toString();
+        System.out.println(fileURI);
         Connection conn = DriverManager.getConnection("jdbc:xmlservice:" + fileURI);
         conn.close();
     } 

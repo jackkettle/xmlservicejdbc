@@ -57,7 +57,7 @@ public class XmlQueryUtils {
         }
         return children;
     }
-    
+
     private static List<Attribute> getAllAttributes(Element element) {
 
         List<Attribute> attributes = new ArrayList<>();
@@ -68,22 +68,21 @@ public class XmlQueryUtils {
         return attributes;
     }
 
-    
     private static Map<String, Object> getAllChildValues(Element element) {
 
         Map<String, Object> childValues = new HashMap<>();
-        for (Element childElement: getAllChilden(element)) {
+        for (Element childElement : getAllChilden(element)) {
             String childName = childElement.getName();
             String childValue = childElement.getText();
             childValues.put(childName, childValue);
         }
         return childValues;
     }
-    
+
     private static Map<String, Object> getAllAttributeValues(Element element) {
 
         Map<String, Object> attributeValues = new HashMap<>();
-        for ( Attribute attribute: getAllAttributes(element)) {
+        for (Attribute attribute : getAllAttributes(element)) {
             String attributeName = attribute.getName();
             String attributeValue = attribute.getValue();
             attributeValues.put(attributeName, attributeValue);
@@ -124,12 +123,12 @@ public class XmlQueryUtils {
                     value = childElement.getText();
                 }
             }
-            
+
             if (Strings.isNullOrEmpty(key)) {
                 throw new SQLException("Unable to find either attribute or element with key: " + columnName);
             }
-            
-            if(key.contains(" "))
+
+            if (key.contains(" "))
                 key = key.replace(" ", "_");
 
             values.put(key, value);
@@ -138,20 +137,20 @@ public class XmlQueryUtils {
     }
 
     public static List<Map<String, Object>> getColumnNames(List<Element> elements) {
-        
+
         List<Map<String, Object>> allRowData = new ArrayList<>();
-        
+
         Set<String> columnNames = new HashSet<>();
-        for(Element element: elements){
-            for(Attribute attribute: getAllAttributes(element)){
+        for (Element element : elements) {
+            for (Attribute attribute : getAllAttributes(element)) {
                 columnNames.add(attribute.getName());
             }
-            for(Element childElement: getAllChilden(element)){
+            for (Element childElement : getAllChilden(element)) {
                 columnNames.add(childElement.getName());
             }
         }
-        
-        for(String name: columnNames){
+
+        for (String name : columnNames) {
             Map<String, Object> map = new HashMap<>();
             map.put(Constants.COLUMN_NAME, name);
             allRowData.add(map);
@@ -159,5 +158,64 @@ public class XmlQueryUtils {
         return allRowData;
     }
 
+    public static List<Map<String, Object>> getColumnValuesAdvanced(List<String> columnNames, Map<String, List<Element>> elementMap)
+            throws SQLException {
+        List<Map<String, Object>> allRowData = new ArrayList<>();
+
+        for (String columnName : columnNames) {
+            String column = "";
+            String tableName = "";
+
+            if (!columnName.contains(".") && elementMap.size() > 1) {
+                throw new SQLException("A column name value must have a table specified when selecting from multiple tables: " + columnName);
+            }
+
+            if (elementMap.size() > 1) {
+                String[] columnSegments = columnName.split(".");
+                if (columnSegments.length != 2)
+                    throw new SQLException("Invalid column name supplied: +", columnName);
+
+                column = columnSegments[0];
+                tableName = columnSegments[1];
+            }
+
+            List<Element> elementsToSearch = null;
+            if (elementMap.size() == 1)
+                elementsToSearch = elementMap.entrySet().iterator().next().getValue();
+            else
+                elementsToSearch = elementMap.get(tableName);
+           
+            
+
+        }
+
+        return allRowData;
+    }
+
+    private static String getValue(Element element, String columnName) throws SQLException {
+        String value = "";
+
+        if (columnName.startsWith(Constants.ATTRIBUTE_PREFIX)) {
+            columnName = columnName.substring(Constants.ATTRIBUTE_PREFIX.length(), columnName.length());
+            Attribute attribute = element.attribute(columnName);
+            if (attribute != null)
+                value = attribute.getValue();
+        } else if (columnName.startsWith(Constants.CHILD_PREFIX)) {
+            columnName = columnName.substring(Constants.CHILD_PREFIX.length(), columnName.length());
+            Element childElement = element.element(columnName);
+            if (childElement != null)
+                value = childElement.getText();
+        } else {
+            Attribute attribute = element.attribute(columnName);
+            Element childElement = element.element(columnName);
+            if (attribute != null) {
+                value = attribute.getValue();
+            }
+            if (childElement != null) {
+                value = childElement.getText();
+            }
+        }
+        return value;
+    }
 
 }

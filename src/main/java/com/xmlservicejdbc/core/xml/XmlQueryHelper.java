@@ -32,6 +32,9 @@ public class XmlQueryHelper {
         if (!SavedResponseProvider.isSet())
             throw new SQLException("The connection is not set");
 
+        if (!sqlQuery.contains(Constants.SQL_KEYWORD_FROM))
+            throw new SQLException("Invlaid sql statemenet, A select statement must contain the FROM keyword");
+
         Optional<String> tableNameWrapper = getTableNameFromQuery(sqlQuery);
         if (!tableNameWrapper.isPresent())
             throw new SQLException("Unable to get table name from sqlQuery: " + sqlQuery);
@@ -59,6 +62,58 @@ public class XmlQueryHelper {
         return data;
     }
 
+    // TODO Integrate this into above method
+    public static List<Map<String, Object>> handleAdvancedSelectQuery(String sqlQuery) throws SQLException {
+
+        if (!SavedResponseProvider.isSet())
+            throw new SQLException("The connection is not set");
+
+        if (!sqlQuery.contains(Constants.SQL_KEYWORD_FROM))
+            throw new SQLException("Invlaid sql statemenet, A select statement must contain the FROM keyword");
+
+        Optional<List<String>> tableNameWrapper = getTableNamesFromQuery(sqlQuery);
+        if (!tableNameWrapper.isPresent())
+            throw new SQLException("Unable to get any table names from sqlQuery: " + sqlQuery);
+
+        boolean multipleTables = false;
+        if (tableNameWrapper.get().size() > 1)
+            multipleTables = true;
+
+        Optional<List<String>> columnNamesWrapper = getColumnNamesFromQuery(sqlQuery);
+        if (!columnNamesWrapper.isPresent())
+            throw new SQLException("Unable to get column names from sqlQuery: " + sqlQuery);
+
+        boolean getAllColumnNames = false;
+        List<String> columnNames = columnNamesWrapper.get();
+        if (columnNames.size() == 1) {
+            if (columnNames.get(0).equals("*"))
+                getAllColumnNames = true;
+        }
+
+        if (multipleTables && getAllColumnNames) {
+            throw new SQLException("You must specify column names when selecting from multiple tables.");
+        }
+
+        List<Element> elements = null;
+        if (getAllColumnNames) {
+            elements = SavedResponseProvider.getXmlObject().getAllElementsByName(tableNameWrapper.get().get(0));
+        }
+
+        Map<String, List<Element>> elementMap = new HashMap<>();
+        for (String tableName : tableNameWrapper.get()) {
+            List<Element> tempElements = SavedResponseProvider.getXmlObject().getAllElementsByName(tableName);
+            elementMap.put(tableName, tempElements);
+        }
+
+        List<Map<String, Object>> data = new ArrayList<>();
+        if (getAllColumnNames)
+            data = XmlQueryUtils.getAllColumnValues(elements);
+        else
+            data = XmlQueryUtils.getColumnValuesAdvanced(columnNamesWrapper.get(), elementMap);
+
+        return data;
+    }
+
     public static List<Map<String, Object>> getColumnNames(String table) throws SQLException {
 
         if (!SavedResponseProvider.isSet())
@@ -71,12 +126,6 @@ public class XmlQueryHelper {
     }
 
     private static Optional<List<String>> getColumnNamesFromQuery(String sqlQuery) {
-
-        if (!sqlQuery.startsWith(Constants.SQL_KEYWORD_SELECT))
-            return Optional.absent();
-
-        if (!sqlQuery.contains(Constants.SQL_KEYWORD_FROM))
-            return Optional.absent();
 
         String stringToExplode = sqlQuery.substring(Constants.SQL_KEYWORD_SELECT.length(), sqlQuery.indexOf(Constants.SQL_KEYWORD_FROM));
         stringToExplode = stringToExplode.trim();
@@ -110,4 +159,57 @@ public class XmlQueryHelper {
         return Optional.absent();
     }
 
+    private static Optional<List<String>> getTableNamesFromQuery(String sqlQuery) throws SQLException {
+
+        sqlQuery = sqlQuery.trim().toLowerCase();
+
+        int index = sqlQuery.indexOf(Constants.SQL_KEYWORD_FROM.toLowerCase());
+        if (index < 0) {
+            System.out.println("Breakpint 1");
+            return Optional.absent();
+        }
+        sqlQuery = sqlQuery.substring(index + Constants.SQL_KEYWORD_FROM.length());
+        sqlQuery = sqlQuery.trim();
+        System.out.println(sqlQuery);
+
+        StringTokenizer stringTokenizer = new StringTokenizer(sqlQuery, " ");
+        StringBuilder Stringbuilder = new StringBuilder();
+        while (stringTokenizer.hasMoreElements()) {
+            String element = stringTokenizer.nextElement().toString();
+            if (isSQLKeyword(element))
+                break;
+            Stringbuilder.append(element);
+            Stringbuilder.append(" ");
+        }
+
+        List<String> tableNames = new ArrayList<>();
+        stringTokenizer = new StringTokenizer(Stringbuilder.toString().trim(), ",");
+        while (stringTokenizer.hasMoreElements()) {
+            String tableName = stringTokenizer.nextToken().trim();
+            tableName = tableName.trim();
+            if (tableName.contains(" "))
+                throw new SQLException("Invalid sql query, space in table name: " + tableName);
+            tableNames.add(tableName);
+        }
+
+        return Optional.absent();
+    }
+
+    private static boolean isSQLKeyword(String element) {
+        element = element.trim().toUpperCase();
+
+        if (element.equals(Constants.SQL_KEYWORD_FROM))
+            return true;
+
+        if (element.equals(Constants.SQL_KEYWORD_SELECT))
+            return true;
+
+        if (element.equals(Constants.SQL_KEYWORD_WHERE))
+            return true;
+
+        if (element.equals(Constants.SQL_KEYWORD_AS))
+            return true;
+
+        return false;
+    }
 }
