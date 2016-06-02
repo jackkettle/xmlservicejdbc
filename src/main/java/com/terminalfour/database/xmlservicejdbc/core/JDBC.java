@@ -1,4 +1,10 @@
-package com.xmlservicejdbc.core;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle
+ * Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core;
 
 import java.sql.Connection;
 import java.sql.Driver;

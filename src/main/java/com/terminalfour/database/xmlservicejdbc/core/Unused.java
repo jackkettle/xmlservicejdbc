@@ -1,4 +1,10 @@
-package com.xmlservicejdbc.core;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle
+ * Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -16,8 +22,8 @@ import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.RowIdLifetime;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
@@ -32,8 +38,8 @@ import java.util.concurrent.Executor;
 
 abstract class Unused {
     
-    private SQLException unused() {
-        return new SQLException("not implemented by XmlService JDBC driver");
+    private SQLException unused() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("not implemented by XmlService JDBC driver: " + new Exception().getStackTrace()[1].getMethodName ());
     }
     
     /*************************************
@@ -46,19 +52,14 @@ abstract class Unused {
     public PreparedStatement prepareStatement(String sql)throws SQLException{unused();return null;}
     public CallableStatement prepareCall(String sql)throws SQLException{unused();return null;}
     public String nativeSQL(String sql)throws SQLException{unused();return null;}
-    public void setAutoCommit(boolean autoCommit)throws SQLException{unused();}
-    public boolean getAutoCommit()throws SQLException{unused();return false;}
     public void commit()throws SQLException{unused();}
     public void rollback()throws SQLException{unused();}
-    public void close()throws SQLException{unused();}
-    public boolean isClosed()throws SQLException{unused();return false;}
     public void setReadOnly(boolean readOnly)throws SQLException{unused();}
     public void setCatalog(String catalog)throws SQLException{unused();}
     public String getCatalog()throws SQLException{unused();return null;}
     public void setTransactionIsolation(int level)throws SQLException{unused();}
     public int getTransactionIsolation()throws SQLException{unused();return 0;}
     public SQLWarning getWarnings()throws SQLException{unused();return null;}
-    public void clearWarnings()throws SQLException{unused();}
     public Statement createStatement(int resultSetType,int resultSetConcurrency)throws SQLException{unused();return null;}
     public PreparedStatement prepareStatement(String sql,int resultSetType,int resultSetConcurrency)throws SQLException{unused();return null;}
     public CallableStatement prepareCall(String sql,int resultSetType,int resultSetConcurrency)throws SQLException{unused();return null;}
@@ -83,8 +84,6 @@ abstract class Unused {
     public NClob createNClob()throws SQLException{unused();return null;}
     public SQLXML createSQLXML()throws SQLException{unused();return null;}
     public boolean isValid(int timeout)throws SQLException{unused();return false;}
-    public void setClientInfo(String name,String value)throws SQLClientInfoException{unused();}
-    public void setClientInfo(Properties properties)throws SQLClientInfoException{unused();}
     public String getClientInfo(String name)throws SQLException{unused();return null;}
     public Properties getClientInfo()throws SQLException{unused();return null;}
     public Array createArrayOf(String typeName,Object[]elements)throws SQLException{unused();return null;}
@@ -140,8 +139,6 @@ abstract class Unused {
     public int getFetchSize()throws SQLException{unused();return 0;}
     public float getFloat(int columnIndex)throws SQLException{unused();return 0;}
     public float getFloat(String columnLabel)throws SQLException{unused();return 0;}
-    public int getInt(int columnIndex)throws SQLException{unused();return 0;}
-    public int getInt(String columnLabel)throws SQLException{unused();return 0;}
     public long getLong(int columnIndex)throws SQLException{unused();return 0;}
     public long getLong(String columnLabel)throws SQLException{unused();return 0;}
     public Reader getNCharacterStream(int columnIndex)throws SQLException{unused();return null;}
@@ -344,8 +341,6 @@ abstract class Unused {
     public String getDatabaseProductName()throws SQLException{unused();return null;}
     public String getDatabaseProductVersion()throws SQLException{unused();return null;}
     public int getDefaultTransactionIsolation()throws SQLException{unused();return 0;}
-    public int getDriverMajorVersion(){unused();return 0;}
-    public int getDriverMinorVersion(){unused();return 0;}
     public String getDriverName()throws SQLException{unused();return null;}
     public String getDriverVersion()throws SQLException{unused();return null;}
     public ResultSet getExportedKeys(String catalog,String schema,String table)throws SQLException{unused();return null;}
@@ -483,7 +478,7 @@ abstract class Unused {
     public boolean supportsStatementPooling()throws SQLException{unused();return false;}
     public boolean supportsStoredFunctionsUsingCallSyntax()throws SQLException{unused();return false;}
     public boolean supportsStoredProcedures()throws SQLException{unused();return false;}
-    public boolean supportsSubqueriesInComparisons()throws SQLException{unused();return false;}
+    public boolean supportsSubqueriesInComparisonks()throws SQLException{unused();return false;}
     public boolean supportsSubqueriesInExists()throws SQLException{unused();return false;}
     public boolean supportsSubqueriesInIns()throws SQLException{unused();return false;}
     public boolean supportsSubqueriesInQuantifieds()throws SQLException{unused();return false;}
@@ -495,29 +490,15 @@ abstract class Unused {
     public boolean updatesAreDetected(int type)throws SQLException{unused();return false;}
     public boolean usesLocalFilePerTable()throws SQLException{unused();return false;}
     public boolean usesLocalFiles()throws SQLException{unused();return false;}
+    public boolean supportsSubqueriesInComparisons()throws SQLException{unused();return false;}
     
     /******************************************
      ************ ResultSetMetaData ************
      ******************************************/
 
-    public String getCatalogName(int column)throws SQLException{unused();return null;}
     public String getColumnClassName(int column)throws SQLException{unused();return null;}
-    public int getColumnDisplaySize(int column)throws SQLException{unused();return 0;}
-    public String getColumnLabel(int column)throws SQLException{unused();return null;}
-    public int getColumnType(int column)throws SQLException{unused();return 0;}
-    public String getColumnTypeName(int column)throws SQLException{unused();return null;}
-    public int getPrecision(int column)throws SQLException{unused();return 0;}
-    public int getScale(int column)throws SQLException{unused();return 0;}
-    public String getSchemaName(int column)throws SQLException{unused();return null;}
-    public String getTableName(int column)throws SQLException{unused();return null;}
-    public boolean isAutoIncrement(int column)throws SQLException{unused();return false;}
-    public boolean isCaseSensitive(int column)throws SQLException{unused();return false;}
-    public boolean isCurrency(int column)throws SQLException{unused();return false;}
     public boolean isDefinitelyWritable(int column)throws SQLException{unused();return false;}
-    public int isNullable(int column)throws SQLException{unused();return 0;}
     public boolean isReadOnly(int column)throws SQLException{unused();return false;}
-    public boolean isSearchable(int column)throws SQLException{unused();return false;}
-    public boolean isSigned(int column)throws SQLException{unused();return false;}
     public boolean isWritable(int column)throws SQLException{unused();return false;}
 
 }

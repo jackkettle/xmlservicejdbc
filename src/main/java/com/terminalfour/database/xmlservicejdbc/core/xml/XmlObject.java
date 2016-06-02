@@ -1,4 +1,9 @@
-package com.xmlservicejdbc.core.xml;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core.xml;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -17,74 +22,80 @@ import com.google.common.collect.Lists;
 
 public class XmlObject {
 
-    private Document document;
+	private Document document;
 
-    public XmlObject() {
-    }
+	public XmlObject () {}
 
-    public XmlObject(String xmlData) throws DocumentException {
-        SAXReader reader = new SAXReader();
-        Document document = reader.read(new InputSource(new StringReader(xmlData)));
-        this.setDocument(document);
-    }
+	public XmlObject (String xmlData)
+			throws DocumentException {
+		SAXReader reader = new SAXReader ();
+		Document document = reader.read (new InputSource (new StringReader (xmlData)));
+		this.setDocument (document);
+	}
 
-    public List<Element> getElementsByName(String name, Element parent, List<Element> elementList) {
-        if (elementList == null)
-            elementList = new ArrayList<Element>();
+	public List<Element> getElementsByName (String name, Element parent) {
+		return getElementsByName (name, parent, null);
+	}
 
-        for (Iterator<?> i = parent.elementIterator(); i.hasNext();) {
-            Element current = (Element) i.next();
-            if (current.getName().equalsIgnoreCase(name)) {
-                elementList.add(current);
-            }
+	private List<Element> getElementsByName (String name, Element parent, List<Element> elementList) {
+		if (elementList == null)
+			elementList = new ArrayList<Element> ();
 
-            getElementsByName(name, current, elementList);
-        }
-        return elementList;
-    }
+		for (Iterator<?> i = parent.elementIterator (); i.hasNext ();) {
+			Element current = (Element)i.next ();
+			if (current.getName ().equalsIgnoreCase (name)) {
+				elementList.add (current);
+			}
 
-    public List<Element> getElements(Element parent, List<Element> elementList) {
-        if (elementList == null)
-            elementList = new ArrayList<Element>();
+			getElementsByName (name, current, elementList);
+		}
+		return elementList;
+	}
 
-        for (Iterator<?> i = parent.elementIterator(); i.hasNext();) {
-            Element current = (Element) i.next();
-            elementList.add(current);
+	public List<Element> getElements (Element parent) {
+		return getElements (parent, null);
+	}
 
-            getElements(current, elementList);
-        }
-        return elementList;
-    }
-    
-    public List<Element> getAllElements() {
-        List<Element> allElements = new ArrayList<Element>();
-        allElements = getElements(document.getRootElement(), allElements);
-        return allElements;
-    }
-    
-    public List<Element> getAllElementsByName(String name) {
-        List<Element> allElements = new ArrayList<Element>();
-        allElements = getElementsByName(name, document.getRootElement(), allElements);
-        return allElements;
-    }
-    
-    public List<String> getUniqueElementNames() {
-        Set<String> uniqueNames = new HashSet<>();
-        List<Element> allElements = new ArrayList<Element>();
-        allElements = getElements(document.getRootElement(), allElements);
-        for(Element element: allElements){
-            uniqueNames.add(element.getName());
-        }
-        return Lists.newArrayList(uniqueNames) ;
-    }
+	private List<Element> getElements (Element parent, List<Element> elementList) {
+		if (elementList == null)
+			elementList = new ArrayList<Element> ();
 
+		for (Iterator<?> i = parent.elementIterator (); i.hasNext ();) {
+			Element current = (Element)i.next ();
+			elementList.add (current);
 
-    public Document getDocument() {
-        return document;
-    }
+			getElements (current, elementList);
+		}
+		return elementList;
+	}
 
-    public void setDocument(Document document) {
-        this.document = document;
-    }
+	public List<Element> getAllElements () {
+		List<Element> allElements = getElements (document.getRootElement ());
+		return allElements;
+	}
+
+	public List<Element> getAllElementsByName (String name) {
+		List<Element> allElements = new ArrayList<Element> ();
+		allElements = getElementsByName (name, document.getRootElement (), allElements);
+		return allElements;
+	}
+
+	public List<String> getUniqueElementNames () {
+		Set<String> uniqueNames = new HashSet<> ();
+		List<Element> allElements = new ArrayList<Element> ();
+		allElements = getElements (document.getRootElement (), allElements);
+		for (Element element : allElements) {
+			uniqueNames.add (element.getName ());
+		}
+		return Lists.newArrayList (uniqueNames);
+	}
+
+	public Document getDocument () {
+		return document;
+	}
+
+	public void setDocument (Document document) {
+		this.document = document;
+	}
 
 }

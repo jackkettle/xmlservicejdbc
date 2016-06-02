@@ -28,6 +28,6 @@ public enum Protocol {
                 return next;
         }
 
-        return INVALID;
-    }
+		return INVALID;
+	}
 }

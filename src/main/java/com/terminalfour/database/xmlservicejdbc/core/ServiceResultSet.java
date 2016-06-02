@@ -1,116 +1,157 @@
-package com.xmlservicejdbc.core;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ServiceResultSet extends Unused implements ResultSet {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private int row = 0;
+public class ServiceResultSet
+		extends Unused
+		implements ResultSet {
 
-    List<Map<String, Object>> data;
+	private int row = 0;
 
-    ServiceResultSet() {
-        this.data = new ArrayList<>();
-    }
+	List<Map<String, Object>> data;
 
-    public void setData(List<Map<String, Object>> data) {
-        this.data = data;
-    }
+	ServiceResultSet () {
+		this.data = new ArrayList<> ();
+	}
 
-    @Override
-    public boolean next() throws SQLException {
+	public void setData (List<Map<String, Object>> data) {
+		this.data = data;
+	}
 
-        if (row >= data.size()) {
-            return false;
-        }
+	@Override
+	public boolean next ()
+			throws SQLException {
 
-        row++;
-        return true;
-    }
+		if (row >= data.size ()) {
+			return false;
+		}
 
-    @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
-        return new ServiceResultSetMetaData(data);
-    }
+		row++;
+		return true;
+	}
 
-    @Override
-    public String getString(String columnLabel) throws SQLException {
+	@Override
+	public ResultSetMetaData getMetaData ()
+			throws SQLException {
+		return new ServiceResultSetMetaData (data);
+	}
 
-        Map<String, Object> dataRow = new HashMap<>();
-        dataRow = data.get(row - 1);
+	@Override
+	public String getString (String columnLabel)
+			throws SQLException {
+		Map<String, Object> dataRow = data.get (row - 1);
+		return (String)dataRow.get (columnLabel);
+	}
 
-        return (String) dataRow.get(columnLabel);
+	@Override
+	public String getString (int columnIndex)
+			throws SQLException {
 
-    }
+		Map<String, Object> dataRow = data.get (row - 1);
 
-    @Override
-    public String getString(int arg0) throws SQLException {
+		if (columnIndex < 0 || columnIndex > dataRow.size ()) {
+			throw new SQLException ("Invalid argument " + columnIndex);
+		}
 
-        Map<String, Object> dataRow = new HashMap<>();
-        dataRow = data.get(row - 1);
+		int index = 1;
+		for (Map.Entry<String, Object> entry : dataRow.entrySet ()) {
 
-        if (arg0 < 0 || arg0 > dataRow.size()) {
-            throw new SQLException("Invalid argument " + arg0);
-        }
+			if (index == columnIndex)
+				return (String)entry.getValue ();
 
-        int index = 0;
-        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
+			index++;
+		}
+		throw new SQLException ("Unable to get value from column with index " + columnIndex);
+	}
 
-            if (index == arg0)
-                return (String) entry.getValue();
+	@Override
+	public int findColumn (String columnLabel)
+			throws SQLException {
+		logger.info ("Finding column with label: {}", columnLabel);
 
-            index++;
-        }
-        throw new SQLException("Unable to get value from column with index " + arg0);
-    }
+		Map<String, Object> dataRow = data.get (row - 1);
 
-    @Override
-    public int findColumn(String columnLabel) throws SQLException {
-        Map<String, Object> dataRow = new HashMap<>();
-        dataRow = data.get(row - 1);
+		int index = 1;
+		for (Map.Entry<String, Object> entry : dataRow.entrySet ()) {
+			if (columnLabel.equals (entry.getKey ()))
+				return index;
 
-        int index = 0;
-        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
-            if (columnLabel.equals(entry.getKey()))
-                return index;
+			index++;
+		}
+		throw new SQLException ("Unable to find column with label " + columnLabel);
+	}
 
-            index++;
-        }
-        throw new SQLException("Unable to find column with label " + columnLabel);
-    }
+	@Override
+	public Object getObject (int columnIndex)
+			throws SQLException {
+		Map<String, Object> dataRow = data.get (row - 1);
 
-    @Override
-    public Object getObject(int columnIndex) throws SQLException {
-        Map<String, Object> dataRow = new HashMap<>();
-        dataRow = data.get(row - 1);
+		if (columnIndex < 0 || columnIndex > dataRow.size ()) {
+			throw new SQLException ("Invalid argument " + columnIndex);
+		}
 
-        if (columnIndex < 0 || columnIndex > dataRow.size()) {
-            throw new SQLException("Invalid argument " + columnIndex);
-        }
+		int index = 1;
+		for (Map.Entry<String, Object> entry : dataRow.entrySet ()) {
 
-        int index = 1;
-        for (Map.Entry<String, Object> entry : dataRow.entrySet()) {
+			if (index == columnIndex)
+				return entry.getValue ();
 
-            if (index == columnIndex)
-                return entry.getValue();
+			index++;
 
-            index++;
+		}
+		throw new SQLException ("Unable to get value from column with index " + columnIndex);
+	}
 
-        }
-        throw new SQLException("Unable to get value from column with index " + columnIndex);
-    }
+	@Override
+	public Object getObject (String columnLabel)
+			throws SQLException {
+		Map<String, Object> dataRow = data.get (row - 1);
+		return dataRow.get (columnLabel);
+	}
 
-    @Override
-    public Object getObject(String columnLabel) throws SQLException {
-        Map<String, Object> dataRow = new HashMap<>();
-        dataRow = data.get(row - 1);
+	@Override
+	public void close ()
+			throws SQLException {
 
-        return dataRow.get(columnLabel);
-    }
+	}
+
+	@Override
+	public boolean isClosed ()
+			throws SQLException {
+		return false;
+	}
+
+	@Override
+	public void clearWarnings ()
+			throws SQLException {
+
+	}
+
+	@Override
+	public int getInt (int arg0)
+			throws SQLException {
+		return 0;
+	}
+
+	@Override
+	public int getInt (String arg0)
+			throws SQLException {
+		return 0;
+	}
+
+	private static final Logger logger = LoggerFactory.getLogger (ServiceResultSet.class);
 
 }

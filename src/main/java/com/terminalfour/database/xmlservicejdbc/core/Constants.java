@@ -1,19 +1,12 @@
-package com.xmlservicejdbc.core;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle
+ * Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core;
 
 public class Constants {
-    
-    /**********************
-     ****** Prtocols ******
-     **********************/
-    
-    public static final int HTTP_PROTOCAL = 1;
-    
-    public static final int HTTPS_PROTOCAL = 2;
-
-    public static final int FILE_PROTOCAL = 3;
-    
-    public static final int INVALID_PROTOCAL = 0;
-    
     
     /************************
      ********* Misc *********
@@ -34,7 +27,6 @@ public class Constants {
     
     public static final String SQL_KEYWORD_FROM = "FROM";
 
-    public static final String SQL_KEYWORD_SELECT = "SELECT";
-    
-    
+	public static final String SQL_KEYWORD_SELECT = "SELECT";
+
 }

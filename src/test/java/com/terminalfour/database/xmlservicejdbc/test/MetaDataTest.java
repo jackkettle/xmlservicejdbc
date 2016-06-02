@@ -1,4 +1,9 @@
-package com.xmlservicejdbc.test;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.test;
 
 import static org.junit.Assert.*;
 
@@ -14,44 +19,48 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
-import com.xmlservicejdbc.core.Constants;
-import com.xmlservicejdbc.core.JDBC;
+import com.terminalfour.database.xmlservicejdbc.core.Constants;
+import com.terminalfour.database.xmlservicejdbc.core.JDBC;
 
 public class MetaDataTest {
 
-    private Connection conn;
+	private Connection conn;
 
-    private DatabaseMetaData meta;
+	private DatabaseMetaData meta;
 
-    @BeforeClass
-    public static void forName() throws Exception {
-        Class.forName(JDBC.class.getCanonicalName());
-    }
+	@BeforeClass
+	public static void forName ()
+			throws Exception {
+		Class.forName (JDBC.class.getCanonicalName ());
+	}
 
-    @Before
-    public void connect() throws Exception {
-        String fileURI = getClass().getResource("/testResponse.xml").toString();
-        conn = DriverManager.getConnection("jdbc:xmlservice:" + fileURI);
-        meta = conn.getMetaData();
-    }
+	@Before
+	public void connect ()
+			throws Exception {
+		String fileURI = getClass ().getResource ("/testResponse.xml").toString ();
+		conn = DriverManager.getConnection ("jdbc:xmlservice:" + fileURI);
+		meta = conn.getMetaData ();
+	}
 
-    @After
-    public void close() throws SQLException {
-        meta = null;
-        conn.close();
-    }
+	@After
+	public void close ()
+			throws SQLException {
+		meta = null;
+		conn.close ();
+	}
 
-    @Test
-    public void getTables() throws Exception {
-        ResultSet rs = meta.getTables(null, null, null, null);
-        int indexCheck = 0;
-        while (rs.next()) {
-            indexCheck++;
-            if (Strings.isNullOrEmpty(rs.getString(Constants.TABLE_NAME))) {
-                throw new Exception();
-            }
-        }
-        assertTrue(indexCheck == 7);
-    }
+	@Test
+	public void getTables ()
+			throws Exception {
+		ResultSet rs = meta.getTables (null, null, null, null);
+		int indexCheck = 0;
+		while (rs.next ()) {
+			indexCheck++;
+			if (Strings.isNullOrEmpty (rs.getString (Constants.TABLE_NAME))) {
+				throw new Exception ();
+			}
+		}
+		assertTrue (indexCheck == 7);
+	}
 
 }

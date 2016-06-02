@@ -1,113 +1,160 @@
-package com.xmlservicejdbc.core.xml;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 31 May 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core.xml;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.xmlservicejdbc.core.Constants;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.terminalfour.database.xmlservicejdbc.core.Constants;
 
 public class XmlQueryHelper {
 
-    public static List<Map<String, Object>> getTablesFromXml(XmlObject xmlObject) {
+	public static List<Map<String, Object>> getTablesFromXml (XmlObject xmlObject) {
 
-        List<Map<String, Object>> data = new ArrayList<>();
+		List<Map<String, Object>> data = new ArrayList<> ();
 
-        for (String name : xmlObject.getUniqueElementNames()) {
-            Map<String, Object> map = new HashMap<>();
-            map.put(Constants.TABLE_NAME, name);
-            data.add(map);
-        }
+		for (String name : xmlObject.getUniqueElementNames ()) {
+			Map<String, Object> map = new HashMap<> ();
+			map.put (Constants.TABLE_NAME, name);
+			data.add (map);
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    public static List<Map<String, Object>> handleSelectQuery(String sqlQuery) throws SQLException {
+	public static List<Map<String, Object>> handleSelectQuery (String sqlQuery)
+			throws SQLException {
 
-        if (!SavedResponseProvider.isSet())
-            throw new SQLException("The connection is not set");
+		logger.info ("Handling select query: {}", sqlQuery);
 
-        Optional<String> tableNameWrapper = getTableNameFromQuery(sqlQuery);
-        if (!tableNameWrapper.isPresent())
-            throw new SQLException("Unable to get table name from sqlQuery: " + sqlQuery);
+		if (!SavedResponseProvider.isSet ())
+			throw new SQLException ("The connection is not set");
 
-        Optional<List<String>> columnNamesWrapper = getColumnNamesFromQuery(sqlQuery);
-        if (!columnNamesWrapper.isPresent())
-            throw new SQLException("Unable to get column names from sqlQuery: " + sqlQuery);
+		Optional<String> tableNameWrapper = getTableNameFromQuery (sqlQuery);
+		if (!tableNameWrapper.isPresent ())
+			throw new SQLException ("Unable to get table name from sqlQuery: " + sqlQuery);
 
-        boolean getAllColumnNames = false;
-        List<String> columnNames = columnNamesWrapper.get();
-        if (columnNames.size() == 1) {
-            if (columnNames.get(0).equals("*"))
-                getAllColumnNames = true;
-        }
+		Optional<List<String>> columnNamesWrapper = getColumnNamesFromQuery (sqlQuery);
+		if (!columnNamesWrapper.isPresent ())
+			throw new SQLException ("Unable to get column names from sqlQuery: " + sqlQuery);
 
-        List<Element> elements = new ArrayList<>();
-        elements = SavedResponseProvider.getXmlObject().getAllElementsByName(tableNameWrapper.get());
+		boolean getAllColumnNames = false;
+		List<String> columnNames = columnNamesWrapper.get ();
+		if (columnNames.size () == 1) {
+			if (columnNames.get (0).equals ("*"))
+				getAllColumnNames = true;
+		}
 
-        List<Map<String, Object>> data = new ArrayList<>();
-        if (getAllColumnNames)
-            data = XmlQueryUtils.getAllColumnValues(elements);
-        else
-            data = XmlQueryUtils.getColumnValues(elements, columnNamesWrapper.get());
+		List<Element> elements = new ArrayList<> ();
+		elements = SavedResponseProvider.getXmlObject ().getAllElementsByName (tableNameWrapper.get ());
 
-        return data;
-    }
+		List<Map<String, Object>> data = new ArrayList<> ();
+		if (getAllColumnNames)
+			data = XmlQueryUtils.getAllColumnValues (elements);
+		else
+			data = XmlQueryUtils.getColumnValues (elements, columnNamesWrapper.get ());
 
-    public static List<Map<String, Object>> getColumnNames(String table) throws SQLException {
+		logger.info ("Total rows found: {}", data.size ());
+		logger.info ("Updating rows with missing columns");
+		sanitizeData (data);
 
-        if (!SavedResponseProvider.isSet())
-            throw new SQLException("The connection is not set");
+		return data;
+	}
 
-        List<Element> elements = new ArrayList<>();
-        elements = SavedResponseProvider.getXmlObject().getAllElementsByName(table);
+	private static void sanitizeData (List<Map<String, Object>> data) {
 
-        return XmlQueryUtils.getColumnNames(elements);
-    }
+		Set<String> allColumnNames = new HashSet<> ();
 
-    private static Optional<List<String>> getColumnNamesFromQuery(String sqlQuery) {
+		for (Map<String, Object> rowColumns : data) {
+			allColumnNames.addAll (rowColumns.keySet ());
+		}
 
-        if (!sqlQuery.startsWith(Constants.SQL_KEYWORD_SELECT))
-            return Optional.absent();
+		logger.info ("Total columns that should be in each row: {}", allColumnNames.size ());
 
-        if (!sqlQuery.contains(Constants.SQL_KEYWORD_FROM))
-            return Optional.absent();
+		Collection<String> missingColumns;
+		for (int i = 0; i < data.size (); i++) {
+			missingColumns = Collections2.filter (allColumnNames, Predicates.not (Predicates.in (data.get (i).keySet ())));
+			if (missingColumns.isEmpty ())
+				continue;
 
-        String stringToExplode = sqlQuery.substring(Constants.SQL_KEYWORD_SELECT.length(), sqlQuery.indexOf(Constants.SQL_KEYWORD_FROM));
-        stringToExplode = stringToExplode.trim();
+			logger.info ("Total missing columns found in row {}: {}", i + 1, missingColumns.size ());
 
-        List<String> data = new ArrayList<>();
+			for (String missingColumn : missingColumns) {
+				data.get (i).put (missingColumn, "");
+			}
+		}
 
-        String[] tokens = stringToExplode.split(",");
-        for (String token : tokens) {
-            data.add(token.trim());
-        }
+	}
 
-        if (data.size() > 0)
-            return Optional.of(data);
+	public static List<Map<String, Object>> getColumnNames (String table)
+			throws SQLException {
 
-        return Optional.absent();
-    }
+		if (!SavedResponseProvider.isSet ())
+			throw new SQLException ("The connection is not set");
 
-    public static Optional<String> getTableNameFromQuery(String sqlQuery) {
+		List<Element> elements = new ArrayList<> ();
+		elements = SavedResponseProvider.getXmlObject ().getAllElementsByName (table);
 
-        StringTokenizer tokens = new StringTokenizer(sqlQuery);
+		return XmlQueryUtils.getColumnNames (elements);
+	}
 
-        boolean lastTokenEqualsFrom = false;
-        while (tokens.hasMoreElements()) {
-            if (lastTokenEqualsFrom)
-                return Optional.of(tokens.nextToken());
+	private static Optional<List<String>> getColumnNamesFromQuery (String sqlQuery) {
 
-            if (tokens.nextToken().toLowerCase().equals(Constants.SQL_KEYWORD_FROM.toLowerCase()))
-                lastTokenEqualsFrom = true;
-        }
+		if (!sqlQuery.startsWith (Constants.SQL_KEYWORD_SELECT))
+			return Optional.absent ();
 
-        return Optional.absent();
-    }
+		if (!sqlQuery.contains (Constants.SQL_KEYWORD_FROM))
+			return Optional.absent ();
+
+		String stringToExplode = sqlQuery.substring (Constants.SQL_KEYWORD_SELECT.length (), sqlQuery.indexOf (Constants.SQL_KEYWORD_FROM));
+		stringToExplode = stringToExplode.trim ();
+
+		List<String> data = new ArrayList<> ();
+
+		String[] tokens = stringToExplode.split (",");
+		for (String token : tokens) {
+			data.add (token.trim ());
+		}
+
+		if (data.size () > 0)
+			return Optional.of (data);
+
+		return Optional.absent ();
+	}
+
+	public static Optional<String> getTableNameFromQuery (String sqlQuery) {
+
+		StringTokenizer tokens = new StringTokenizer (sqlQuery);
+
+		boolean lastTokenEqualsFrom = false;
+		while (tokens.hasMoreElements ()) {
+			if (lastTokenEqualsFrom)
+				return Optional.of (tokens.nextToken ());
+
+			if (tokens.nextToken ().toLowerCase ().equals (Constants.SQL_KEYWORD_FROM.toLowerCase ()))
+				lastTokenEqualsFrom = true;
+		}
+
+		return Optional.absent ();
+	}
+
+	private static final Logger logger = LoggerFactory.getLogger (XmlQueryHelper.class);
 
 }
