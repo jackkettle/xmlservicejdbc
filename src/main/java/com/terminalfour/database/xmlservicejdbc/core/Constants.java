@@ -8,10 +8,6 @@ package com.terminalfour.database.xmlservicejdbc.core;
 
 public class Constants {
     
-    /************************
-     ********* Misc *********
-     ************************/
-    
     public static final String ATTRIBUTE_PREFIX = "a_";
     
     public static final String CHILD_PREFIX = "c_";
@@ -19,14 +15,5 @@ public class Constants {
     public static final String TABLE_NAME = "TABLE_NAME";
     
     public static final String COLUMN_NAME = "COLUMN_NAME";
-    
-    
-    /************************
-     ***** SQL Keywords *****
-     ************************/
-    
-    public static final String SQL_KEYWORD_FROM = "FROM";
-
-	public static final String SQL_KEYWORD_SELECT = "SELECT";
 
 }

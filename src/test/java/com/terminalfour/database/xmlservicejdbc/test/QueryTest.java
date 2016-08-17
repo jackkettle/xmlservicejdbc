@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.google.common.base.Strings;
 
+@SuppressWarnings("restriction")
 public class QueryTest {
 
 	private Connection conn;

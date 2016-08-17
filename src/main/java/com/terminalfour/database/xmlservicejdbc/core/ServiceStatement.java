@@ -1,8 +1,7 @@
 /*
  * (C) 2016 TERMINALFOUR Solutions Ltd.
  *
- * Author: Jack Kettle 
- * Created: 31 May 2016
+ * Author: Jack Kettle Created: 31 May 2016
  */
 package com.terminalfour.database.xmlservicejdbc.core;
 
@@ -12,6 +11,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.terminalfour.database.xmlservicejdbc.core.xml.XmlQueryHelper;
 
 public class ServiceStatement
@@ -23,10 +23,18 @@ public class ServiceStatement
 			throws SQLException {
 		sqlQuery = sqlQuery.trim ();
 
-		if (!sqlQuery.toLowerCase ().startsWith (Constants.SQL_KEYWORD_SELECT.toLowerCase ()))
-			throw new SQLException ("Only select statements are currently supported");
+		String firstToken = sqlQuery.substring (0, sqlQuery.indexOf (" "));
+		Optional<Keyword> keyword = Keyword.getKeyword (firstToken);
 
-		List<Map<String, Object>> data = XmlQueryHelper.handleSelectQuery (sqlQuery);
+		if (!keyword.isPresent ())
+			throw new SQLException ("Invalid sql statemenet");
+
+		List<Map<String, Object>> data = null;
+		if (keyword.get () == Keyword.SELECT)
+			data = XmlQueryHelper.handleSelectQuery (sqlQuery);
+
+		if (keyword.get () == Keyword.ADAVANCED_SELECT)
+			data = XmlQueryHelper.handleAdvancedSelectQuery (sqlQuery);
 
 		ServiceResultSet resultSet = new ServiceResultSet ();
 		resultSet.setData (data);

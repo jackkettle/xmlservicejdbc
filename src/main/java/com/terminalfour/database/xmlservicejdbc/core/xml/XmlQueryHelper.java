@@ -23,6 +23,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.terminalfour.database.xmlservicejdbc.core.Constants;
+import com.terminalfour.database.xmlservicejdbc.core.Keyword;
 
 public class XmlQueryHelper {
 
@@ -47,13 +48,16 @@ public class XmlQueryHelper {
 		if (!SavedResponseProvider.isSet ())
 			throw new SQLException ("The connection is not set");
 
-		Optional<String> tableNameWrapper = getTableNameFromQuery (sqlQuery);
+		Optional<List<String>> tableNameWrapper = SqlQueryUtils.getTableNamesFromQuery (sqlQuery);
 		if (!tableNameWrapper.isPresent ())
 			throw new SQLException ("Unable to get table name from sqlQuery: " + sqlQuery);
 
-		Optional<List<String>> columnNamesWrapper = getColumnNamesFromQuery (sqlQuery);
-		if (!columnNamesWrapper.isPresent ())
+		Optional<List<String>> columnNamesWrapper = SqlQueryUtils.getColumnNamesFromQuery (sqlQuery);
+		if (!columnNamesWrapper.isPresent () || columnNamesWrapper.get ().size () == 0)
 			throw new SQLException ("Unable to get column names from sqlQuery: " + sqlQuery);
+
+		if (columnNamesWrapper.get ().size () > 1)
+			throw new SQLException ("Too many tables specified for simple query");
 
 		boolean getAllColumnNames = false;
 		List<String> columnNames = columnNamesWrapper.get ();
@@ -63,7 +67,7 @@ public class XmlQueryHelper {
 		}
 
 		List<Element> elements = new ArrayList<> ();
-		elements = SavedResponseProvider.getXmlObject ().getAllElementsByName (tableNameWrapper.get ());
+		elements = SavedResponseProvider.getXmlObject ().getAllElementsByName (tableNameWrapper.get ().get (0));
 
 		List<Map<String, Object>> data = new ArrayList<> ();
 		if (getAllColumnNames)
@@ -76,6 +80,28 @@ public class XmlQueryHelper {
 		sanitizeData (data);
 
 		return data;
+	}
+
+	public static List<Map<String, Object>> handleAdvancedSelectQuery (String sqlQuery)
+			throws SQLException {
+
+		if (!SavedResponseProvider.isSet ())
+			throw new SQLException ("The connection is not set");
+		
+		Optional<List<String>> tableNameWrapper = SqlQueryUtils.getTableNamesFromQuery (sqlQuery);
+		if (!tableNameWrapper.isPresent ())
+			throw new SQLException ("Unable to get table name from sqlQuery: " + sqlQuery);
+
+		Optional<List<String>> columnNamesWrapper = SqlQueryUtils.getColumnNamesFromQuery (sqlQuery);
+		if (!columnNamesWrapper.isPresent () || columnNamesWrapper.get ().size () == 0)
+			throw new SQLException ("Unable to get column names from sqlQuery: " + sqlQuery);
+
+		List<String> columnNames = columnNamesWrapper.get ();
+		if (columnNames.size () == 1 && columnNames.get (0).equals ("*"))
+			throw new SQLException ("Unsupported * operator found");
+
+		return null;
+
 	}
 
 	private static void sanitizeData (List<Map<String, Object>> data) {
@@ -113,46 +139,6 @@ public class XmlQueryHelper {
 		elements = SavedResponseProvider.getXmlObject ().getAllElementsByName (table);
 
 		return XmlQueryUtils.getColumnNames (elements);
-	}
-
-	private static Optional<List<String>> getColumnNamesFromQuery (String sqlQuery) {
-
-		if (!sqlQuery.startsWith (Constants.SQL_KEYWORD_SELECT))
-			return Optional.absent ();
-
-		if (!sqlQuery.contains (Constants.SQL_KEYWORD_FROM))
-			return Optional.absent ();
-
-		String stringToExplode = sqlQuery.substring (Constants.SQL_KEYWORD_SELECT.length (), sqlQuery.indexOf (Constants.SQL_KEYWORD_FROM));
-		stringToExplode = stringToExplode.trim ();
-
-		List<String> data = new ArrayList<> ();
-
-		String[] tokens = stringToExplode.split (",");
-		for (String token : tokens) {
-			data.add (token.trim ());
-		}
-
-		if (data.size () > 0)
-			return Optional.of (data);
-
-		return Optional.absent ();
-	}
-
-	public static Optional<String> getTableNameFromQuery (String sqlQuery) {
-
-		StringTokenizer tokens = new StringTokenizer (sqlQuery);
-
-		boolean lastTokenEqualsFrom = false;
-		while (tokens.hasMoreElements ()) {
-			if (lastTokenEqualsFrom)
-				return Optional.of (tokens.nextToken ());
-
-			if (tokens.nextToken ().toLowerCase ().equals (Constants.SQL_KEYWORD_FROM.toLowerCase ()))
-				lastTokenEqualsFrom = true;
-		}
-
-		return Optional.absent ();
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger (XmlQueryHelper.class);
