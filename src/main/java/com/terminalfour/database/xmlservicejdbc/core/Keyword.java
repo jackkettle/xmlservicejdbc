@@ -15,10 +15,17 @@ public enum Keyword {
 	ADAVANCED_SELECT("ADVANCED_SELECT"),
 	FROM("FROM"),
 	WHERE("WHERE"),
-	PARENT("PARENT");
+	PARENT("PARENT"),
+	DATE_ELEMENT("DATE_ELEMENT"),
+	DATE_FORMAT("DATE_FORMAT");
+
 
 	private String initial;
 
+	Keyword () {
+		this.initial = "";
+	}
+	
 	Keyword (final String initial) {
 		this.initial = initial;
 	}

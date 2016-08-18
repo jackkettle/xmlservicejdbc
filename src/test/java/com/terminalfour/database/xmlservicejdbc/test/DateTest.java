@@ -1,7 +1,7 @@
 /*
  * (C) 2016 TERMINALFOUR Solutions Ltd.
  *
- * Author: Jack Kettle Created: 02 June 2016
+ * Author: Jack Kettle Created: 17 August 2016
  */
 package com.terminalfour.database.xmlservicejdbc.test;
 
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.terminalfour.database.xmlservicejdbc.core.JDBC;
 
-public class AdvacnedQueryTest {
+public class DateTest {
 
 	private Connection conn;
 
@@ -37,7 +37,7 @@ public class AdvacnedQueryTest {
 	@Before
 	public void connect ()
 			throws Exception {
-		String fileURI = getClass ().getResource ("/testResponse3.xml").toString ();
+		String fileURI = getClass ().getResource ("/rssTest1.rss").toString ();
 		conn = DriverManager.getConnection ("jdbc:xmlservice:" + fileURI);
 		stmt = conn.createStatement ();
 	}
@@ -47,32 +47,20 @@ public class AdvacnedQueryTest {
 			throws SQLException {
 		conn.close ();
 	}
-
+	
 	@Test
-	public void advancedQueryTestFail ()
+	public void dateTestWorks ()
 			throws Exception {
-		String sqlQuery = "ADVANCED_SELECT * FROM size, catalog_item PARENT size";
-		try {
-			stmt.executeQuery (sqlQuery);
-		}
-		catch (SQLException e) {
-			assertEquals (e.getMessage (), "Unsupported * operator found");
-		}
-	}
-
-	@Test
-	public void advancedQueryTestPass ()
-			throws Exception {
-		String sqlQuery = "ADVANCED_SELECT catalog_item.gender, catalog_item.item_number, size.description, size. FROM catalog_item, size PARENT catalog_item";
+		String sqlQuery = "SELECT pubDate FROM item DATE_ELEMENT pubDate DATE_FORMAT \"EEE, dd MMM yyyy HH:mm:ss z\" ";
 		ResultSet resultSet = stmt.executeQuery (sqlQuery);
-		
+
 		while (resultSet.next ()) {
-			
+			assertEquals(resultSet.getString ("pubDate"), "2016-08-217 11:08:00");
+			return;
 		}
-		
 	}
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger (AdvacnedQueryTest.class);
+	private static final Logger logger = LoggerFactory.getLogger (DateTest.class);
 
 }

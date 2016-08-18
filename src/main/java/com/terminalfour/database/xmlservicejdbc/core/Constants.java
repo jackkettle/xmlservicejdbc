@@ -15,5 +15,7 @@ public class Constants {
     public static final String TABLE_NAME = "TABLE_NAME";
     
     public static final String COLUMN_NAME = "COLUMN_NAME";
+    
+    public static final String SQL_DATE_FORMAT = "YYYY-MM-DD HH:MM:SS";
 
 }

@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -24,6 +23,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.terminalfour.database.xmlservicejdbc.core.Constants;
 import com.terminalfour.database.xmlservicejdbc.core.Keyword;
+import com.terminalfour.database.xmlservicejdbc.core.KeywordStatementPair;
+import com.terminalfour.database.xmlservicejdbc.core.utils.DateHandler;
+import com.terminalfour.database.xmlservicejdbc.core.utils.KeywordStatementPairUtils;
+import com.terminalfour.database.xmlservicejdbc.core.utils.QueryHandler;
 
 public class XmlQueryHelper {
 
@@ -79,6 +82,13 @@ public class XmlQueryHelper {
 		logger.info ("Updating rows with missing columns");
 		sanitizeData (data);
 
+		List<KeywordStatementPair> actionList = QueryHandler.getActionList (sqlQuery);
+		Optional<KeywordStatementPair> dateElement = KeywordStatementPairUtils.get (actionList, Keyword.DATE_ELEMENT);
+		Optional<KeywordStatementPair> dateFormat = KeywordStatementPairUtils.get (actionList, Keyword.DATE_FORMAT);
+		if (dateElement.isPresent () && dateFormat.isPresent ()) {
+			DateHandler.handleDateFormatElements (data, dateElement.get ().getStatement (), dateFormat.get ().getStatement ());
+		}
+
 		return data;
 	}
 
@@ -87,10 +97,16 @@ public class XmlQueryHelper {
 
 		if (!SavedResponseProvider.isSet ())
 			throw new SQLException ("The connection is not set");
-		
-		Optional<List<String>> tableNameWrapper = SqlQueryUtils.getTableNamesFromQuery (sqlQuery);
-		if (!tableNameWrapper.isPresent ())
-			throw new SQLException ("Unable to get table name from sqlQuery: " + sqlQuery);
+
+		List<KeywordStatementPair> actionList = QueryHandler.getActionList (sqlQuery);
+
+		Optional<KeywordStatementPair> fromActionWrapper = KeywordStatementPairUtils.get (actionList, Keyword.FROM);
+		if (!fromActionWrapper.isPresent ())
+			throw new SQLException ("No FROM keyword in sql: " + sqlQuery);
+
+		Optional<List<String>> tableNameWrapper = QueryHandler.getTableNames (fromActionWrapper.get ().getStatement ());
+		if (!tableNameWrapper.isPresent () || tableNameWrapper.get ().size () < 1)
+			throw new SQLException ("Unable to get table names from sqlQuery: " + sqlQuery);
 
 		Optional<List<String>> columnNamesWrapper = SqlQueryUtils.getColumnNamesFromQuery (sqlQuery);
 		if (!columnNamesWrapper.isPresent () || columnNamesWrapper.get ().size () == 0)

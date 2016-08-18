@@ -5,8 +5,6 @@
  */
 package com.terminalfour.database.xmlservicejdbc.test;
 
-import static org.junit.Assert.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.terminalfour.database.xmlservicejdbc.core.JDBC;
 
-public class AdvacnedQueryTest {
+public class RSSSpecificTest {
 
 	private Connection conn;
 
@@ -37,7 +35,7 @@ public class AdvacnedQueryTest {
 	@Before
 	public void connect ()
 			throws Exception {
-		String fileURI = getClass ().getResource ("/testResponse3.xml").toString ();
+		String fileURI = getClass ().getResource ("/rssTest1.rss").toString ();
 		conn = DriverManager.getConnection ("jdbc:xmlservice:" + fileURI);
 		stmt = conn.createStatement ();
 	}
@@ -51,28 +49,14 @@ public class AdvacnedQueryTest {
 	@Test
 	public void advancedQueryTestFail ()
 			throws Exception {
-		String sqlQuery = "ADVANCED_SELECT * FROM size, catalog_item PARENT size";
-		try {
-			stmt.executeQuery (sqlQuery);
-		}
-		catch (SQLException e) {
-			assertEquals (e.getMessage (), "Unsupported * operator found");
-		}
-	}
-
-	@Test
-	public void advancedQueryTestPass ()
-			throws Exception {
-		String sqlQuery = "ADVANCED_SELECT catalog_item.gender, catalog_item.item_number, size.description, size. FROM catalog_item, size PARENT catalog_item";
+		String sqlQuery = "SELECT * FROM item";
 		ResultSet resultSet = stmt.executeQuery (sqlQuery);
-		
+
 		while (resultSet.next ()) {
-			
+			logger.info ("{}", resultSet.getString ("title"));
 		}
-		
 	}
 
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger (AdvacnedQueryTest.class);
+	private static final Logger logger = LoggerFactory.getLogger (RSSSpecificTest.class);
 
 }

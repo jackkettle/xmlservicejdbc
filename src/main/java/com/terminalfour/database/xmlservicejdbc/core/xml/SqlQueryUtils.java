@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.terminalfour.database.xmlservicejdbc.core.Keyword;
-import com.terminalfour.database.xmlservicejdbc.test.AdvacnedQueryTest;
 
 public class SqlQueryUtils {
 
