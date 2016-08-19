@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.terminalfour.database.xmlservicejdbc.core.JDBC;
 
-public class RSSSpecificTest {
+public class WhereClauseTest {
 
 	private Connection conn;
 
@@ -35,7 +35,7 @@ public class RSSSpecificTest {
 	@Before
 	public void connect ()
 			throws Exception {
-		String fileURI = getClass ().getResource ("/rssTest1.rss").toString ();
+		String fileURI = getClass ().getResource ("/rssTest2.rss").toString ();
 		conn = DriverManager.getConnection ("jdbc:xmlservice:" + fileURI);
 		stmt = conn.createStatement ();
 	}
@@ -47,16 +47,17 @@ public class RSSSpecificTest {
 	}
 
 	@Test
-	public void advancedQueryTestFail ()
-			throws Exception {
-		String sqlQuery = "SELECT * FROM item";
-		ResultSet resultSet = stmt.executeQuery (sqlQuery);
-
-		while (resultSet.next ()) {
-			logger.info ("{}", resultSet.getString ("title"));
+	public void initialWhereTest () throws Exception {
+		String query = "SELECT * FROM item";
+		
+		ResultSet resultSet = stmt.executeQuery (query);
+		
+		while(resultSet.next ()){
+			return;
 		}
+
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger (RSSSpecificTest.class);
+	private static final Logger logger = LoggerFactory.getLogger (WhereClauseTest.class);
 
 }

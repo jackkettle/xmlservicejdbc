@@ -79,7 +79,7 @@ public class QueryHandler {
 
 	}
 
-	public static Optional<List<String>> getTableNames (String statement) {
+	public static Optional<List<String>> getCsvValues (String statement) {
 
 		if (Strings.isNullOrEmpty (statement))
 			return Optional.absent ();

@@ -18,4 +18,8 @@ public class Constants {
     
     public static final String SQL_DATE_FORMAT = "YYYY-MM-DD HH:MM:SS";
 
+	public static final String CHILD_ATTRIBUTE_DELIMITER = "$";
+
+	public static final String NAMESPACE_DELIMITER = ":";
+
 }

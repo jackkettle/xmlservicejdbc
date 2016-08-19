@@ -26,6 +26,8 @@ import com.terminalfour.database.xmlservicejdbc.core.Keyword;
 import com.terminalfour.database.xmlservicejdbc.core.KeywordStatementPair;
 import com.terminalfour.database.xmlservicejdbc.core.utils.DateHandler;
 import com.terminalfour.database.xmlservicejdbc.core.utils.KeywordStatementPairUtils;
+import com.terminalfour.database.xmlservicejdbc.core.utils.LoggingUtils;
+import com.terminalfour.database.xmlservicejdbc.core.utils.MarkupHandler;
 import com.terminalfour.database.xmlservicejdbc.core.utils.QueryHandler;
 
 public class XmlQueryHelper {
@@ -83,13 +85,38 @@ public class XmlQueryHelper {
 		sanitizeData (data);
 
 		List<KeywordStatementPair> actionList = QueryHandler.getActionList (sqlQuery);
+
+		handleDateAction (actionList, data);
+
+		handleDecodeAction (actionList, data);
+		
+		handleWhereAction (actionList, data);
+		
+		LoggingUtils.logColumns (data);
+
+		return data;
+	}
+
+	private static void handleWhereAction (List<KeywordStatementPair> actionList, List<Map<String, Object>> data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void handleDecodeAction (List<KeywordStatementPair> actionList, List<Map<String, Object>> data)
+			throws SQLException {
+		Optional<KeywordStatementPair> decodeMarkupAction = KeywordStatementPairUtils.get (actionList, Keyword.DECODE);
+		if (decodeMarkupAction.isPresent ()) {
+			MarkupHandler.handleDecodeElements (data, decodeMarkupAction.get ().getStatement ());
+		}
+	}
+
+	private static void handleDateAction (List<KeywordStatementPair> actionList, List<Map<String, Object>> data)
+			throws SQLException {
 		Optional<KeywordStatementPair> dateElement = KeywordStatementPairUtils.get (actionList, Keyword.DATE_ELEMENT);
 		Optional<KeywordStatementPair> dateFormat = KeywordStatementPairUtils.get (actionList, Keyword.DATE_FORMAT);
 		if (dateElement.isPresent () && dateFormat.isPresent ()) {
 			DateHandler.handleDateFormatElements (data, dateElement.get ().getStatement (), dateFormat.get ().getStatement ());
 		}
-
-		return data;
 	}
 
 	public static List<Map<String, Object>> handleAdvancedSelectQuery (String sqlQuery)
@@ -104,7 +131,7 @@ public class XmlQueryHelper {
 		if (!fromActionWrapper.isPresent ())
 			throw new SQLException ("No FROM keyword in sql: " + sqlQuery);
 
-		Optional<List<String>> tableNameWrapper = QueryHandler.getTableNames (fromActionWrapper.get ().getStatement ());
+		Optional<List<String>> tableNameWrapper = QueryHandler.getCsvValues (fromActionWrapper.get ().getStatement ());
 		if (!tableNameWrapper.isPresent () || tableNameWrapper.get ().size () < 1)
 			throw new SQLException ("Unable to get table names from sqlQuery: " + sqlQuery);
 

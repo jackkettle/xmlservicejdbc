@@ -3,11 +3,9 @@ package com.terminalfour.database.xmlservicejdbc.core.utils;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import com.google.common.base.Optional;
@@ -19,7 +17,7 @@ public class DateHandler {
 	public static void handleDateFormatElements (List<Map<String, Object>> data, String dateElementsStatement, String dateFormatStatement)
 			throws SQLException {
 
-		Optional<List<String>> dateElements = getValues (dateElementsStatement);
+		Optional<List<String>> dateElements = QueryHandler.getCsvValues (dateElementsStatement);
 		if (!dateElements.isPresent () || dateElements.get ().isEmpty ()) {
 			throw new SQLException ("Failed to get date elements from sql: " + dateElementsStatement);
 		}
@@ -47,23 +45,6 @@ public class DateHandler {
 				entry.setValue (newFormat.format (date));
 			}
 		}
-
-	}
-
-	public static Optional<List<String>> getValues (String statement) {
-
-		if (Strings.isNullOrEmpty (statement))
-			return Optional.absent ();
-
-		List<String> tableNameList = new ArrayList<> ();
-		StringTokenizer tokens = new StringTokenizer (statement, ",");
-
-		while (tokens.hasMoreElements ()) {
-			String token = tokens.nextToken ().trim ();
-			tableNameList.add (token);
-		}
-
-		return Optional.of (tableNameList);
 
 	}
 

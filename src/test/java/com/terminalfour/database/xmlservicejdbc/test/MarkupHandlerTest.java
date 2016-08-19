@@ -1,9 +1,11 @@
 /*
  * (C) 2016 TERMINALFOUR Solutions Ltd.
  *
- * Author: Jack Kettle Created: 18 Aug 2016
+ * Author: Jack Kettle Created: 18 August 2016
  */
 package com.terminalfour.database.xmlservicejdbc.test;
+
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.terminalfour.database.xmlservicejdbc.core.JDBC;
 
-public class RSSSpecificTest {
+public class MarkupHandlerTest {
 
 	private Connection conn;
 
@@ -45,18 +47,22 @@ public class RSSSpecificTest {
 			throws SQLException {
 		conn.close ();
 	}
-
+	
 	@Test
-	public void advancedQueryTestFail ()
+	public void decodeTest ()
 			throws Exception {
-		String sqlQuery = "SELECT * FROM item";
+		String sqlQuery = "SELECT title FROM item DECODE title";
 		ResultSet resultSet = stmt.executeQuery (sqlQuery);
 
 		while (resultSet.next ()) {
-			logger.info ("{}", resultSet.getString ("title"));
+			String text = resultSet.getString ("title");
+			if(text.startsWith ("Brexit")){
+				assertEquals(text, "Brexit – The New University Challenge");
+			}
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger (RSSSpecificTest.class);
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger (MarkupHandlerTest.class);
 
 }

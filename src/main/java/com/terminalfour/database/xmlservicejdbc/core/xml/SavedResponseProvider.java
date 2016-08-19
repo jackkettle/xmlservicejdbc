@@ -23,7 +23,8 @@ public class SavedResponseProvider {
 			throws DocumentException {
 		isSet = true;
 		SavedResponseProvider.responseString = responseString;
-		setXmlObject (new XmlObject (responseString));
+		String XString = responseString.replaceAll("[^\\x20-\\x7e\\x0A]", "");
+		setXmlObject (new XmlObject (XString));
 
 	}
 

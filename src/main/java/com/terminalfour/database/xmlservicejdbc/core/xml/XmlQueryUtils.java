@@ -42,16 +42,26 @@ public class XmlQueryUtils {
 
 		List<Map<String, Object>> allRowData = new ArrayList<> ();
 		for (Element element : elements) {
-			Map<String, Object> allValues = new TreeMap<> ();
+
+			Map<String, Object> attributeValues;
+			Map<String, Object> childValues;
+			Map<String, Object> childAttributeValues;
+
 			if (allNames) {
-				Map<String, Object> attributeValues = getAllAttributeValues (element);
-				Map<String, Object> childValues = getAllChildValues (element);
-				allValues.putAll (attributeValues);
-				allValues.putAll (childValues);
+				attributeValues = getAllAttributeValues (element, null);
+				childValues = getAllChildValues (element, null);
+				childAttributeValues = getAllChildAttributeValues (element, null);
 			}
 			else {
-				allValues.putAll (getAllValues (element, columnNames));
+				attributeValues = getAllAttributeValues (element, columnNames);
+				childValues = getAllChildValues (element, columnNames);
+				childAttributeValues = getAllChildAttributeValues (element, columnNames);
 			}
+
+			Map<String, Object> allValues = new TreeMap<> ();
+			allValues.putAll (attributeValues);
+			allValues.putAll (childValues);
+			allValues.putAll (childAttributeValues);
 			allRowData.add (allValues);
 		}
 		return allRowData;
@@ -78,75 +88,69 @@ public class XmlQueryUtils {
 		return attributes;
 	}
 
-	private static Map<String, Object> getAllChildValues (Element element) {
+	private static Map<String, Object> getAllChildValues (Element element, List<String> columnNames) {
 
 		Map<String, Object> childValues = new HashMap<> ();
 		for (Element childElement : getAllChilden (element)) {
 			String childName = childElement.getName ();
+			String childElementNameSpacePrefix = childElement.getNamespacePrefix ();
+			if (!Strings.isNullOrEmpty (childElementNameSpacePrefix))
+				childName = childElementNameSpacePrefix + Constants.NAMESPACE_DELIMITER + childName;
+
+			if (columnNames != null && !columnNames.contains (childName))
+				continue;
+
 			String childValue = childElement.getText ();
 			childValues.put (childName, childValue);
 		}
 		return childValues;
 	}
 
-	private static Map<String, Object> getAllAttributeValues (Element element) {
+	private static Map<String, Object> getAllAttributeValues (Element element, List<String> columnNames) {
+
+		String childElementNameSpacePrefix = element.getNamespacePrefix ();
 
 		Map<String, Object> attributeValues = new HashMap<> ();
 		for (Attribute attribute : getAllAttributes (element)) {
+
 			String attributeName = attribute.getName ();
+
+			if (!Strings.isNullOrEmpty (childElementNameSpacePrefix))
+				attributeName = childElementNameSpacePrefix + Constants.NAMESPACE_DELIMITER + attributeName;
+
+			if (columnNames != null && !columnNames.contains (attributeName))
+				continue;
+
 			String attributeValue = attribute.getValue ();
 			attributeValues.put (attributeName, attributeValue);
 		}
 		return attributeValues;
 	}
 
-	private static Map<String, String> getAllValues (Element element, List<String> columnNames)
-			throws SQLException {
-		Map<String, String> values = new TreeMap<> ();
-		for (String columnName : columnNames) {
+	private static Map<String, Object> getAllChildAttributeValues (Element element, List<String> columnNames) {
+		Map<String, Object> attributeValues = new HashMap<> ();
+		for (Iterator<?> i = element.elementIterator (); i.hasNext ();) {
+			Element childElement = (Element)i.next ();
 
-			String key = "";
-			String value = "";
+			String childElementName = childElement.getName ();
+			String childElementNameSpacePrefix = childElement.getNamespacePrefix ();
 
-			if (columnName.startsWith (Constants.ATTRIBUTE_PREFIX)) {
-				columnName = columnName.substring (Constants.ATTRIBUTE_PREFIX.length (), columnName.length ());
-				Attribute attribute = element.attribute (columnName);
-				if (attribute == null)
-					break;
-				key = columnName;
-				value = attribute.getValue ();
-			}
-			else if (columnName.startsWith (Constants.CHILD_PREFIX)) {
-				columnName = columnName.substring (Constants.CHILD_PREFIX.length (), columnName.length ());
-				Element childElement = element.element (columnName);
-				if (childElement == null)
-					break;
-				key = columnName;
-				value = childElement.getText ();
-			}
-			else {
-				Attribute attribute = element.attribute (columnName);
-				Element childElement = element.element (columnName);
-				if (attribute != null) {
-					key = columnName;
-					value = attribute.getValue ();
-				}
-				if (childElement != null) {
-					key = columnName;
-					value = childElement.getText ();
-				}
+			for (Attribute attribute : getAllAttributes (childElement)) {
+
+				String attributeName = childElementName + Constants.CHILD_ATTRIBUTE_DELIMITER + attribute.getName ();
+
+				if (!Strings.isNullOrEmpty (childElementNameSpacePrefix))
+					attributeName = childElementNameSpacePrefix + Constants.NAMESPACE_DELIMITER + attributeName;
+
+				if (columnNames != null && !columnNames.contains (attributeName))
+					continue;
+
+				String attributeValue = attribute.getValue ();
+				attributeValues.put (attributeName, attributeValue);
 			}
 
-			if (Strings.isNullOrEmpty (key)) {
-				throw new SQLException ("Unable to find either attribute or element with key: " + columnName);
-			}
-
-			if (key.contains (" "))
-				key = key.replace (" ", "_");
-
-			values.put (key, value);
 		}
-		return values;
+		return attributeValues;
 	}
 
 	public static List<Map<String, Object>> getColumnNames (List<Element> elements) {
