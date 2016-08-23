@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.terminalfour.database.xmlservicejdbc.core.KeywordStatementPair;
-import com.terminalfour.database.xmlservicejdbc.core.utils.QueryHandler;
+import com.terminalfour.database.xmlservicejdbc.core.handlers.QueryHandler;
+import com.terminalfour.database.xmlservicejdbc.core.objects.KeywordStatementPair;
 
 public class QueryHandlerTest {
 

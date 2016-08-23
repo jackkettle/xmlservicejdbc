@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.terminalfour.database.xmlservicejdbc.core.objects.Protocol;
+import com.terminalfour.database.xmlservicejdbc.core.utils.ConnectionUtils;
 import com.terminalfour.database.xmlservicejdbc.core.xml.SavedResponseProvider;
 
 public class ServiceConnection
@@ -42,9 +44,9 @@ public class ServiceConnection
 
 		Optional<String> responseDataWrapper = Optional.absent ();
 		if (urlProtocol == Protocol.FILE)
-			responseDataWrapper = Utils.getStringFromFile (urlString);
+			responseDataWrapper = ConnectionUtils.getStringFromFile (urlString);
 		else
-			responseDataWrapper = Utils.getStringFromUrl (urlString);
+			responseDataWrapper = ConnectionUtils.getStringFromUrl (urlString);
 
 		if (!responseDataWrapper.isPresent ())
 			throw new SQLException ("No data recieved from url: " + urlString);

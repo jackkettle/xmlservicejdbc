@@ -1,4 +1,9 @@
-package com.terminalfour.database.xmlservicejdbc.core.utils;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 22 August 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core.handlers;
 
 import java.sql.SQLException;
 import java.util.List;

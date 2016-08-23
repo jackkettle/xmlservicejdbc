@@ -3,7 +3,7 @@
  *
  * Author: Jack Kettle Created: 31 May 2016
  */
-package com.terminalfour.database.xmlservicejdbc.core.xml;
+package com.terminalfour.database.xmlservicejdbc.core.utils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,11 +17,14 @@ import java.util.TreeMap;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.terminalfour.database.xmlservicejdbc.core.Constants;
 
-public class XmlQueryUtils {
+public class QueryUtils {
 
 	public static List<Map<String, Object>> getColumnValues (List<Element> elements, List<String> columnNames)
 			throws SQLException {
@@ -137,7 +140,7 @@ public class XmlQueryUtils {
 
 			for (Attribute attribute : getAllAttributes (childElement)) {
 
-				String attributeName = childElementName + Constants.CHILD_ATTRIBUTE_DELIMITER + attribute.getName ();
+				String attributeName = childElementName + Constants.ATTRIBUTE_DELIMITER + attribute.getName ();
 
 				if (!Strings.isNullOrEmpty (childElementNameSpacePrefix))
 					attributeName = childElementNameSpacePrefix + Constants.NAMESPACE_DELIMITER + attributeName;
@@ -165,6 +168,9 @@ public class XmlQueryUtils {
 			for (Element childElement : getAllChilden (element)) {
 				columnNames.add (childElement.getName ());
 			}
+			for (Element childElement : getAllChilden (element)) {
+				columnNames.add (childElement.getName ());
+			}
 		}
 
 		for (String name : columnNames) {
@@ -175,4 +181,24 @@ public class XmlQueryUtils {
 		return allRowData;
 	}
 
+	public static Optional<String> getValueFromElement (Element element, String columnName) {
+
+		String attribute = KeywordStatementPairUtils.getAttribute (columnName);
+		String name = KeywordStatementPairUtils.getElement (columnName);
+		
+		if(!element.getName ().equals (name)){
+			return Optional.absent ();
+		}
+		
+		if(Strings.isNullOrEmpty (attribute)){
+			return Optional.of (element.getText ());
+		}
+		
+		return Optional.of (element.attributeValue (attribute));
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger (QueryUtils.class);
+	
 }

@@ -5,6 +5,8 @@
  */
 package com.terminalfour.database.xmlservicejdbc.test;
 
+import static org.junit.Assert.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -48,16 +50,18 @@ public class WhereClauseTest {
 
 	@Test
 	public void initialWhereTest () throws Exception {
-		String query = "SELECT * FROM item";
+		String query = "SELECT * FROM item DUPLICATE_IDENTIFIER x-trumba:customfield$name = Event Title";
 		
 		ResultSet resultSet = stmt.executeQuery (query);
 		
 		while(resultSet.next ()){
-			return;
+			assertEquals(resultSet.getString ("x-trumba:customfield"), "ACM Service");
+			return; 
 		}
 
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger (WhereClauseTest.class);
 
 }

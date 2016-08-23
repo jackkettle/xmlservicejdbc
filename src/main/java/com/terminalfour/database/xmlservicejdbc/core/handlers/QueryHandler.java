@@ -1,4 +1,9 @@
-package com.terminalfour.database.xmlservicejdbc.core.utils;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 20 August 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.terminalfour.database.xmlservicejdbc.core.Keyword;
-import com.terminalfour.database.xmlservicejdbc.core.KeywordStatementPair;
+import com.terminalfour.database.xmlservicejdbc.core.Constants;
+import com.terminalfour.database.xmlservicejdbc.core.objects.Keyword;
+import com.terminalfour.database.xmlservicejdbc.core.objects.KeywordStatementPair;
 
 public class QueryHandler {
 
@@ -68,7 +74,7 @@ public class QueryHandler {
 			}
 
 		}
-		
+
 		for (KeywordStatementPair keywordStatementPair1 : actionList) {
 			String value = keywordStatementPair1.getStatement ();
 			value = value.replace ("\"", "");
@@ -94,6 +100,22 @@ public class QueryHandler {
 
 		return Optional.of (tableNameList);
 
+	}
+
+	public static String buildColumnName (String namespace, String element, String attribute) {
+
+		String returnToken = "";
+
+		if (!Strings.isNullOrEmpty (namespace))
+			returnToken = namespace + Constants.NAMESPACE_DELIMITER + returnToken;
+
+		if (!Strings.isNullOrEmpty (namespace))
+			returnToken = returnToken + element;
+
+		if (!Strings.isNullOrEmpty (attribute))
+			returnToken = returnToken + Constants.ATTRIBUTE_DELIMITER + attribute;
+
+		return returnToken;
 	}
 
 	@SuppressWarnings("unused")

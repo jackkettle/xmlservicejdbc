@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
+import com.terminalfour.database.xmlservicejdbc.core.objects.Keyword;
 import com.terminalfour.database.xmlservicejdbc.core.xml.XmlQueryHelper;
 
 public class ServiceStatement
@@ -32,9 +33,6 @@ public class ServiceStatement
 		List<Map<String, Object>> data = null;
 		if (keyword.get () == Keyword.SELECT)
 			data = XmlQueryHelper.handleSelectQuery (sqlQuery);
-
-		if (keyword.get () == Keyword.ADAVANCED_SELECT)
-			data = XmlQueryHelper.handleAdvancedSelectQuery (sqlQuery);
 
 		ServiceResultSet resultSet = new ServiceResultSet ();
 		resultSet.setData (data);

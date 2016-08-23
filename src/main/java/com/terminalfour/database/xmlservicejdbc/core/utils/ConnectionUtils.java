@@ -3,7 +3,7 @@
  *
  * Author: Jack Kettle Created: 31 May 2016
  */
-package com.terminalfour.database.xmlservicejdbc.core;
+package com.terminalfour.database.xmlservicejdbc.core.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Optional;
 
-public class Utils {
+public class ConnectionUtils {
 
 	@SuppressWarnings("resource")
 	public static Optional<String> getStringFromFile (String urlString) {

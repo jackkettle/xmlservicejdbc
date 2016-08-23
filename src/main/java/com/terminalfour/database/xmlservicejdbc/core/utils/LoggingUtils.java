@@ -1,3 +1,8 @@
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 20 August 2016
+ */
 package com.terminalfour.database.xmlservicejdbc.core.utils;
 
 import java.util.Iterator;

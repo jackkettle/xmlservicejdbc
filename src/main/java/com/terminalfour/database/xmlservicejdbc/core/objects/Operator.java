@@ -1,44 +1,39 @@
 /*
  * (C) 2016 TERMINALFOUR Solutions Ltd.
  *
- * Author: Jack Kettle Created: 02 June 2016
+ * Author: Jack Kettle Created: 23 August 2016
  */
-package com.terminalfour.database.xmlservicejdbc.core;
+package com.terminalfour.database.xmlservicejdbc.core.objects;
 
 import java.util.StringTokenizer;
 
 import com.google.common.base.Optional;
 
-public enum Keyword {
+public enum Operator {
 
-	SELECT("SELECT"),
-	ADAVANCED_SELECT("ADVANCED_SELECT"),
-	FROM("FROM"),
-	WHERE("WHERE"),
-	AND("AND"),
-	OR("OR"),
-	PARENT("PARENT"),
-	DATE_ELEMENT("DATE_ELEMENT"),
-	DATE_FORMAT("DATE_FORMAT"),
-	DECODE("DECODE");
-
+	NOT_EQUAL("!="),
+	GREATER_THAN_OR_EQUAL(">="),
+	LESS_THAN_OR_EQUAL("<="),
+	EQUAL("="),
+	GREATER_THAN(">"),
+	LESS_THAN("<");
 
 	private String initial;
 
-	Keyword () {
+	Operator () {
 		this.initial = "";
 	}
-	
-	Keyword (final String initial) {
+
+	Operator (final String initial) {
 		this.initial = initial;
 	}
 
-	public static Optional<Keyword> getKeyword (final String token) {
+	public static Optional<Operator> getKeyword (final String token) {
 		if (token == null)
 			return Optional.absent ();
 
 		String tokenUpdated = token.trim ().toUpperCase ();
-		for (Keyword next : values ()) {
+		for (Operator next : values ()) {
 			if (tokenUpdated.equals (next.initial))
 				return Optional.of (next);
 		}
@@ -50,7 +45,7 @@ public enum Keyword {
 		return containsKeyword (urlString, null);
 	}
 
-	public static boolean containsKeyword (final String urlString, Keyword keyword) {
+	public static boolean containsKeyword (final String urlString, Operator keyword) {
 		if (urlString == null)
 			return false;
 
@@ -59,7 +54,7 @@ public enum Keyword {
 		while (tokens.hasMoreTokens ()) {
 			String token = tokens.nextToken ();
 
-			Optional<Keyword> keywordWrapper = getKeyword (token);
+			Optional<Operator> keywordWrapper = getKeyword (token);
 			if (!keywordWrapper.isPresent ())
 				continue;
 
@@ -71,22 +66,22 @@ public enum Keyword {
 		return false;
 	}
 
-	public static Optional<Keyword> getFirstKeyword (final String urlString) {
+	public static Optional<Operator> getFirstKeyword (final String urlString) {
 		if (urlString == null)
 			return Optional.absent ();
-		
+
 		StringTokenizer tokens = new StringTokenizer (urlString);
-		
+
 		while (tokens.hasMoreTokens ()) {
 			String token = tokens.nextToken ();
-			
-			Optional<Keyword> keywordWrapper = getKeyword (token);
+
+			Optional<Operator> keywordWrapper = getKeyword (token);
 			if (!keywordWrapper.isPresent ())
 				continue;
-			
+
 			return keywordWrapper;
 		}
-		
+
 		return Optional.absent ();
 	}
 

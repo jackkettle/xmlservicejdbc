@@ -1,4 +1,9 @@
-package com.terminalfour.database.xmlservicejdbc.core.xml;
+/*
+ * (C) 2016 TERMINALFOUR Solutions Ltd.
+ *
+ * Author: Jack Kettle Created: 20 August 2016
+ */
+package com.terminalfour.database.xmlservicejdbc.core.utils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.terminalfour.database.xmlservicejdbc.core.Keyword;
+import com.terminalfour.database.xmlservicejdbc.core.objects.Keyword;
 
 public class SqlQueryUtils {
 
@@ -37,8 +42,6 @@ public class SqlQueryUtils {
 		
 		int endIndex = sqlQuery.toUpperCase ().indexOf (Keyword.FROM.toString ());
 		
-		logger.info ("{} - {}", beginningIndex, endIndex);
-
 		String stringToExplode = sqlQuery.substring (beginningIndex, endIndex);
 		stringToExplode = stringToExplode.trim ();
 
@@ -90,6 +93,7 @@ public class SqlQueryUtils {
 
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger (SqlQueryUtils.class);
 
 	

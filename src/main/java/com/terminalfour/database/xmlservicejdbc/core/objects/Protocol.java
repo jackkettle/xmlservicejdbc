@@ -4,7 +4,7 @@
  * Author: Paul Kelly
  * Created: 30 May 2016
  */
-package com.terminalfour.database.xmlservicejdbc.core;
+package com.terminalfour.database.xmlservicejdbc.core.objects;
 
 public enum Protocol {
     HTTP("http://"),
